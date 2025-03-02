@@ -1,0 +1,111 @@
+﻿<Window
+    x:Class="Qryptic.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Qryptic"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    AllowsTransparency="True"
+    Background="Transparent"
+    MouseMove="Window_MouseMove"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Storyboard x:Key="blinksb">
+            <DoubleAnimation
+                AutoReverse="True"
+                FillBehavior="Stop"
+                SpeedRatio="1.4"
+                Storyboard.TargetName="LeftEye"
+                Storyboard.TargetProperty="(Rectangle.Height)"
+                From="24"
+                To="8"
+                Duration="0:0:0.3" />
+            <DoubleAnimation
+                AutoReverse="True"
+                FillBehavior="Stop"
+                SpeedRatio="1.4"
+                Storyboard.TargetName="RightEye"
+                Storyboard.TargetProperty="(Rectangle.Height)"
+                From="24"
+                To="8"
+                Duration="0:0:0.3" />
+        </Storyboard>
+        <SolidColorBrush x:Key="Highlight" Color="#312F2F" />
+        <SolidColorBrush x:Key="Text_Primary" Color="#22181C" />
+        <FontFamily x:Key="Batangas">/Fonts/#Batangas</FontFamily>
+    </Window.Resources>
+    <Border
+        Margin="30"
+        Background="#F6E8EA"
+        CornerRadius="10">
+        <Border.Effect>
+            <DropShadowEffect Opacity="0.2" ShadowDepth="3" />
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="6*" />
+            </Grid.RowDefinitions>
+            <Label
+                Grid.Row="0"
+                VerticalAlignment="Center"
+                Content="Qryptic"
+                FontFamily="{DynamicResource Batangas}"
+                FontSize="34"
+                Foreground="{DynamicResource Text_Primary}" />
+            <Canvas Name="DrawingCanvas">
+                <Ellipse
+                    Canvas.Left="125"
+                    Canvas.Top="80"
+                    Width="150"
+                    Height="150"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeThickness="7" />
+                <Rectangle
+                    Name="LeftEye"
+                    Canvas.Left="164"
+                    Canvas.Top="132"
+                    Height="24"
+                    RadiusX="2"
+                    RadiusY="2"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeThickness="10" />
+                <Rectangle
+                    Name="RightEye"
+                    Canvas.Left="222"
+                    Canvas.Top="132"
+                    Height="24"
+                    RadiusX="2"
+                    RadiusY="2"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeThickness="10" />
+                <Path
+                    Data="M190,165 Q200,175 210,165"
+                    Fill="Transparent"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeEndLineCap="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="8" />
+                <Path
+                    Data="M130,310 Q150,225 200,227"
+                    Fill="Transparent"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeEndLineCap="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="7" />
+                <Path
+                    Data="M270,310 Q250,225 200,227"
+                    Fill="Transparent"
+                    Stroke="{DynamicResource Highlight}"
+                    StrokeEndLineCap="Round"
+                    StrokeStartLineCap="Round"
+                    StrokeThickness="7" />
+
+            </Canvas>
+        </Grid>
+    </Border>
+</Window>
