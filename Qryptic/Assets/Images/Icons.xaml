@@ -1,0 +1,96 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="Batangas">/Assets/Fonts/#Batangas</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk">/Assets/Fonts/#Space Grotesk</FontFamily>
+    <Geometry x:Key="barcodeGeometry">F1 M256,256z M0,0z M232,48L232,88A8,8,0,0,1,216,88L216,56 184,56A8,8,0,0,1,184,40L224,40A8,8,0,0,1,232,48z M72,200L40,200 40,168A8,8,0,0,0,24,168L24,208A8,8,0,0,0,32,216L72,216A8,8,0,0,0,72,200z M224,160A8,8,0,0,0,216,168L216,200 184,200A8,8,0,0,0,184,216L224,216A8,8,0,0,0,232,208L232,168A8,8,0,0,0,224,160z M32,96A8,8,0,0,0,40,88L40,56 72,56A8,8,0,0,0,72,40L32,40A8,8,0,0,0,24,48L24,88A8,8,0,0,0,32,96z M80,80A8,8,0,0,0,72,88L72,168A8,8,0,0,0,88,168L88,88A8,8,0,0,0,80,80z M184,168L184,88A8,8,0,0,0,168,88L168,168A8,8,0,0,0,184,168z M144,80A8,8,0,0,0,136,88L136,168A8,8,0,0,0,152,168L152,88A8,8,0,0,0,144,80z M112,80A8,8,0,0,0,104,88L104,168A8,8,0,0,0,120,168L120,88A8,8,0,0,0,112,80z</Geometry>
+    <DrawingGroup x:Key="barcodeDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource barcodeGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="barcodeDrawingImage" Drawing="{StaticResource barcodeDrawingGroup}" />
+    <Geometry x:Key="gear_sixGeometry">F1 M256,256z M0,0z M128,80A48,48,0,1,0,176,128A48.05,48.05,0,0,0,128,80z M128,160A32,32,0,1,1,160,128A32,32,0,0,1,128,160z M237.94,107.21A8,8,0,0,0,234.05,101.81L204.22,84.81 204.1,51.19A8,8,0,0,0,201.27,45.11A111.91,111.91,0,0,0,164.55,24.44A8,8,0,0,0,158.09,25.03L128,41.85 97.88,25A8,8,0,0,0,91.41,24.4A112.1,112.1,0,0,0,54.73,45.15A8,8,0,0,0,51.9,51.22L51.75,84.87 21.92,101.87A8,8,0,0,0,18.03,107.27A106.47,106.47,0,0,0,18.03,148.83A8,8,0,0,0,21.92,154.23L51.75,171.23 51.87,204.85A8,8,0,0,0,54.7,210.93A111.91,111.91,0,0,0,91.42,231.6A8,8,0,0,0,97.88,231.01L128,214.15 158.12,231A7.91,7.91,0,0,0,162.02,232A8.09,8.09,0,0,0,164.59,231.58A112.1,112.1,0,0,0,201.27,210.85A8,8,0,0,0,204.1,204.78L204.25,171.13 234.08,154.13A8,8,0,0,0,237.97,148.73A106.47,106.47,0,0,0,237.94,107.21z M222.94,142.12L194.37,158.37A8,8,0,0,0,191.37,161.37C190.79,162.37,190.18,163.43,189.56,164.43A7.94,7.94,0,0,0,188.34,168.64L188.19,200.89A95.89,95.89,0,0,1,162.82,215.19L134,199.13A8,8,0,0,0,130.09,198.13L129.9,198.13C128.69,198.13,127.47,198.13,126.26,198.13A8.08,8.08,0,0,0,122.16,199.13L93.32,215.23A96,96,0,0,1,67.88,201L67.77,168.8A8,8,0,0,0,66.55,164.58C65.93,163.58,65.32,162.58,64.75,161.52A8.09,8.09,0,0,0,61.75,158.46L33.15,142.17A90.49,90.49,0,0,1,33.15,113.91L61.67,97.63A8,8,0,0,0,64.67,94.63C65.25,93.63,65.86,92.57,66.48,91.57A7.94,7.94,0,0,0,67.7,87.36L67.85,55.11A95.89,95.89,0,0,1,93.22,40.81L122,56.87A8,8,0,0,0,126.1,57.87C127.31,57.87,128.53,57.87,129.74,57.87A8.08,8.08,0,0,0,133.84,56.87L162.68,40.77A96,96,0,0,1,188.12,55L188.23,87.2A8,8,0,0,0,189.45,91.42C190.07,92.42,190.68,93.42,191.25,94.48A8.09,8.09,0,0,0,194.25,97.54L222.85,113.83A90.49,90.49,0,0,1,222.9,142.12z</Geometry>
+    <DrawingGroup x:Key="gear_sixDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource gear_sixGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="gear_sixDrawingImage" Drawing="{StaticResource gear_sixDrawingGroup}" />
+    <Geometry x:Key="plus_circleGeometry">F1 M256,256z M0,0z M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24z M128,216A88,88,0,1,1,216,128A88.1,88.1,0,0,1,128,216z M176,128A8,8,0,0,1,168,136L136,136 136,168A8,8,0,0,1,120,168L120,136 88,136A8,8,0,0,1,88,120L120,120 120,88A8,8,0,0,1,136,88L136,120 168,120A8,8,0,0,1,176,128z</Geometry>
+    <DrawingGroup x:Key="plus_circleDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource plus_circleGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="plus_circleDrawingImage" Drawing="{StaticResource plus_circleDrawingGroup}" />
+    <Geometry x:Key="article_ny_timesGeometry">F1 M256,256z M0,0z M128,96L232,96A8,8,0,0,1,232,112L128,112A8,8,0,0,1,128,96z M232,128L128,128A8,8,0,0,0,128,144L232,144A8,8,0,0,0,232,128z M232,160L80,160A8,8,0,0,0,80,176L232,176A8,8,0,0,0,232,160z M232,192L80,192A8,8,0,0,0,80,208L232,208A8,8,0,0,0,232,192z M96,144A8,8,0,0,0,96,128L88,128 88,64 120,64 120,72A8,8,0,0,0,136,72L136,56A8,8,0,0,0,128,48L32,48A8,8,0,0,0,24,56L24,72A8,8,0,0,0,40,72L40,64 72,64 72,128 64,128A8,8,0,0,0,64,144z</Geometry>
+    <DrawingGroup x:Key="article_ny_timesDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource article_ny_timesGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="article_ny_timesDrawingImage" Drawing="{StaticResource article_ny_timesDrawingGroup}" />
+    <Geometry x:Key="map_pinGeometry">F1 M256,256z M0,0z M128,64A40,40,0,1,0,168,104A40,40,0,0,0,128,64z M128,128A24,24,0,1,1,152,104A24,24,0,0,1,128,128z M128,16A88.1,88.1,0,0,0,40,104C40,135.4,54.51,168.68,82,200.25A254.19,254.19,0,0,0,123.45,238.55A8,8,0,0,0,132.63,238.55A254.19,254.19,0,0,0,174,200.25C201.45,168.68,216,135.4,216,104A88.1,88.1,0,0,0,128,16z M128,222C111.47,209,56,161.25,56,104A72,72,0,0,1,200,104C200,161.23,144.53,209,128,222z</Geometry>
+    <DrawingGroup x:Key="map_pinDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource map_pinGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="map_pinDrawingImage" Drawing="{StaticResource map_pinDrawingGroup}" />
+    <Geometry x:Key="floppy_disk_back_fillGeometry">F1 M256,256z M0,0z M208,32L83.31,32A15.86,15.86,0,0,0,72,36.69L36.69,72A15.86,15.86,0,0,0,32,83.31L32,208A16,16,0,0,0,48,224L208,224A16,16,0,0,0,224,208L224,48A16,16,0,0,0,208,32z M128,184A32,32,0,1,1,160,152A32,32,0,0,1,128,184z M172,80A4,4,0,0,1,168,84L88,84A4,4,0,0,1,84,80L84,48 172,48z</Geometry>
+    <DrawingGroup x:Key="floppy_disk_back_fillDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource floppy_disk_back_fillGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="floppy_disk_back_fillDrawingImage" Drawing="{StaticResource floppy_disk_back_fillDrawingGroup}" />
+    <Geometry x:Key="qr_code_boldGeometry">F1 M256,256z M0,0z M100,36L56,36A20,20,0,0,0,36,56L36,100A20,20,0,0,0,56,120L100,120A20,20,0,0,0,120,100L120,56A20,20,0,0,0,100,36z M96,96L60,96 60,60 96,60z M100,136L56,136A20,20,0,0,0,36,156L36,200A20,20,0,0,0,56,220L100,220A20,20,0,0,0,120,200L120,156A20,20,0,0,0,100,136z M96,196L60,196 60,160 96,160z M200,36L156,36A20,20,0,0,0,136,56L136,100A20,20,0,0,0,156,120L200,120A20,20,0,0,0,220,100L220,56A20,20,0,0,0,200,36z M196,96L160,96 160,60 196,60z M136,172L136,148A12,12,0,0,1,160,148L160,172A12,12,0,0,1,136,172z M220,164A12,12,0,0,1,208,176L196,176 196,208A12,12,0,0,1,184,220L148,220A12,12,0,0,1,148,196L172,196 172,148A12,12,0,0,1,196,148L196,152 208,152A12,12,0,0,1,220,164z</Geometry>
+    <DrawingGroup x:Key="qr_code_boldDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource qr_code_boldGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="qr_code_boldDrawingImage" Drawing="{StaticResource qr_code_boldDrawingGroup}" />
+    <Geometry x:Key="calendar_dotsGeometry">F1 M256,256z M0,0z M208,32L184,32 184,24A8,8,0,0,0,168,24L168,32 88,32 88,24A8,8,0,0,0,72,24L72,32 48,32A16,16,0,0,0,32,48L32,208A16,16,0,0,0,48,224L208,224A16,16,0,0,0,224,208L224,48A16,16,0,0,0,208,32z M72,48L72,56A8,8,0,0,0,88,56L88,48 168,48 168,56A8,8,0,0,0,184,56L184,48 208,48 208,80 48,80 48,48z M208,208L48,208 48,96 208,96 208,208z M140,132A12,12,0,1,1,128,120A12,12,0,0,1,140,132z M184,132A12,12,0,1,1,172,120A12,12,0,0,1,184,132z M96,172A12,12,0,1,1,84,160A12,12,0,0,1,96,172z M140,172A12,12,0,1,1,128,160A12,12,0,0,1,140,172z M184,172A12,12,0,1,1,172,160A12,12,0,0,1,184,172z</Geometry>
+    <DrawingGroup x:Key="calendar_dotsDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource calendar_dotsGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="calendar_dotsDrawingImage" Drawing="{StaticResource calendar_dotsDrawingGroup}" />
+    <Geometry x:Key="copy_fillGeometry">F1 M256,256z M0,0z M216,32L88,32A8,8,0,0,0,80,40L80,80 40,80A8,8,0,0,0,32,88L32,216A8,8,0,0,0,40,224L168,224A8,8,0,0,0,176,216L176,176 216,176A8,8,0,0,0,224,168L224,40A8,8,0,0,0,216,32z M208,160L176,160 176,88A8,8,0,0,0,168,80L96,80 96,48 208,48z</Geometry>
+    <DrawingGroup x:Key="copy_fillDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource copy_fillGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="copy_fillDrawingImage" Drawing="{StaticResource copy_fillDrawingGroup}" />
+    <Geometry x:Key="wifi_highGeometry">F1 M256,256z M0,0z M140,204A12,12,0,1,1,128,192A12,12,0,0,1,140,204z M237.08,87A172,172,0,0,0,18.92,87A8,8,0,0,0,29.08,99.37A156,156,0,0,1,226.92,99.37A8,8,0,0,0,237.08,87z M205,122.77A124,124,0,0,0,51.06,122.77A8,8,0,0,0,61,135.31A108,108,0,0,1,195.06,135.31A8,8,0,0,0,206.3,134.01A8,8,0,0,0,205,122.77z M172.74,158.53A76.05,76.05,0,0,0,83.32,158.53A8,8,0,0,0,92.74,171.47A60,60,0,0,1,163.32,171.47A8,8,0,1,0,172.74,158.53z</Geometry>
+    <DrawingGroup x:Key="wifi_highDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource wifi_highGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="wifi_highDrawingImage" Drawing="{StaticResource wifi_highDrawingGroup}" />
+    <Geometry x:Key="xGeometry">F1 M256,256z M0,0z M205.66,194.34A8,8,0,0,1,194.34,205.66L128,139.31 61.66,205.66A8,8,0,0,1,50.34,194.34L116.69,128 50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69 194.34,50.34A8,8,0,0,1,205.66,61.66L139.31,128z</Geometry>
+    <DrawingGroup x:Key="xDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource xGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="xDrawingImage" Drawing="{StaticResource xDrawingGroup}" />
+    <Geometry x:Key="globe_simpleGeometry">F1 M256,256z M0,0z M128,24L128,24A104,104,0,1,0,232,128A104.12,104.12,0,0,0,128,24z M215.62,120L175.79,120C174,83.49,159.94,57.67,148.41,42.4A88.19,88.19,0,0,1,215.63,120z M96.23,136L159.77,136C157.46,177.61 137.54,203.11 128,213 118.45,203.1 98.54,177.6 96.23,136z M96.23,120C98.54,78.39 118.46,52.89 128,43 137.55,52.93 157.46,78.43 159.77,120z M107.59,42.4C96.06,57.67,82,83.49,80.21,120L40.37,120A88.19,88.19,0,0,1,107.59,42.4z M40.37,136L80.21,136C82.03,172.51,96.06,198.33,107.59,213.6A88.19,88.19,0,0,1,40.37,136z M148.37,213.6C159.9,198.33,173.93,172.51,175.75,136L215.59,136A88.19,88.19,0,0,1,148.41,213.6z</Geometry>
+    <DrawingGroup x:Key="globe_simpleDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource globe_simpleGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="globe_simpleDrawingImage" Drawing="{StaticResource globe_simpleDrawingGroup}" />
+    <Geometry x:Key="chat_dotsGeometry">F1 M256,256z M0,0z M116,128A12,12,0,1,1,128,140A12,12,0,0,1,116,128z M84,140A12,12,0,1,0,72,128A12,12,0,0,0,84,140z M172,140A12,12,0,1,0,160,128A12,12,0,0,0,172,140z M232,64L232,192A16,16,0,0,1,216,208L83,208 50.4,236.16 50.31,236.23A15.89,15.89,0,0,1,40,240A16.13,16.13,0,0,1,33.2,238.48A15.85,15.85,0,0,1,24,224L24,64A16,16,0,0,1,40,48L216,48A16,16,0,0,1,232,64z M40,224L40,224z M216,64L40,64 40,224 74.77,194A8,8,0,0,1,80,192L216,192z</Geometry>
+    <DrawingGroup x:Key="chat_dotsDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource chat_dotsGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="chat_dotsDrawingImage" Drawing="{StaticResource chat_dotsDrawingGroup}" />
+    <Geometry x:Key="user_circleGeometry">F1 M256,256z M0,0z M128,24A104,104,0,1,0,232,128A104.11,104.11,0,0,0,128,24z M74.08,197.5A64,64,0,0,1,181.92,197.5A87.83,87.83,0,0,1,74.08,197.5z M96,120A32,32,0,1,1,128,152A32,32,0,0,1,96,120z M193.76,186.41A79.66,79.66,0,0,0,157.7,157.66A48,48,0,1,0,98.3,157.66A79.66,79.66,0,0,0,62.24,186.41A88,88,0,1,1,193.76,186.41z</Geometry>
+    <DrawingGroup x:Key="user_circleDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource user_circleGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="user_circleDrawingImage" Drawing="{StaticResource user_circleDrawingGroup}" />
+    <Geometry x:Key="clock_counter_clockwiseGeometry">F1 M256,256z M0,0z M136,80L136,123.47 172.12,145.14A8,8,0,0,1,163.88,158.86L123.88,134.86A8,8,0,0,1,120,128L120,80A8,8,0,0,1,136,80z M128,32A95.44,95.44,0,0,0,60.08,60.15C52.81,67.51,46.35,74.59,40,82L40,64A8,8,0,0,0,24,64L24,104A8,8,0,0,0,32,112L72,112A8,8,0,0,0,72,96L49,96C56.15,87.58,63.27,79.65,71.39,71.43A80,80,0,1,1,73.05,186.18A8,8,0,1,0,62.05,197.82A96,96,0,1,0,128,32z</Geometry>
+    <DrawingGroup x:Key="clock_counter_clockwiseDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource clock_counter_clockwiseGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="clock_counter_clockwiseDrawingImage" Drawing="{StaticResource clock_counter_clockwiseDrawingGroup}" />
+    <Geometry x:Key="share_fat_fillGeometry">F1 M256,256z M0,0z M237.66,117.66L157.66,197.66A8,8,0,0,1,144,192L144,152.23C86.9,155.47,47.75,192.5,36.76,204.23L36.76,204.23A12,12,0,0,1,16.08,194.65C19.79,162.39 37.46,131.36 65.84,107.28 89.41,87.28 118.06,74.59 144,72.37L144,32A8,8,0,0,1,157.66,26.34L237.66,106.34A8,8,0,0,1,237.66,117.66z</Geometry>
+    <DrawingGroup x:Key="share_fat_fillDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource share_fat_fillGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="share_fat_fillDrawingImage" Drawing="{StaticResource share_fat_fillDrawingGroup}" />
+    <Geometry x:Key="envelopeGeometry">F1 M256,256z M0,0z M224,48L32,48A8,8,0,0,0,24,56L24,192A16,16,0,0,0,40,208L216,208A16,16,0,0,0,232,192L232,56A8,8,0,0,0,224,48z M128,133.15L52.57,64 203.43,64z M98.71,128L40,181.81 40,74.19z M110.55,138.85L122.55,149.9A8,8,0,0,0,133.37,149.9L145.37,138.85 203.37,192 52.57,192z M157.29,128L216,74.18 216,181.82z</Geometry>
+    <DrawingGroup x:Key="envelopeDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+        <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource envelopeGeometry}" />
+    </DrawingGroup>
+    <DrawingImage x:Key="envelopeDrawingImage" Drawing="{StaticResource envelopeDrawingGroup}" />
+    <DrawingImage x:Key="arrow_leftDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+                <GeometryDrawing Brush="#FF22181C" Geometry="F1 M256,256z M0,0z M224,128A8,8,0,0,1,216,136L59.31,136 117.66,194.34A8,8,0,0,1,106.34,205.66L34.34,133.66A8,8,0,0,1,34.34,122.34L106.34,50.34A8,8,0,0,1,117.66,61.66L59.31,120 216,120A8,8,0,0,1,224,128z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+</ResourceDictionary>
