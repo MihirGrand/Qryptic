@@ -337,22 +337,32 @@ namespace Qryptic
 
         private void EmailBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(8);
         }
 
         private void SMSBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(9);
         }
 
         private void LocBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(10);
         }
 
         private void EventBtn_Click(object sender, RoutedEventArgs e)
         {
+            viewModel.NavigateTo(11);
+        }
 
+        private void UPIBtn_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.NavigateTo(12);
+        }
+
+        private void BarcodeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            viewModel.NavigateTo(13);
         }
     }
 }

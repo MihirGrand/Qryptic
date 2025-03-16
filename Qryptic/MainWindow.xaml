@@ -314,6 +314,20 @@
                                     Click="EventBtn_Click"
                                     ImageSource="{StaticResource calendar_dotsDrawingImage}"
                                     LabelText="Event" />
+                                <local:FlatButton
+                                    x:Name="UPIBtn"
+                                    Grid.Row="10"
+                                    Grid.Column="1"
+                                    Click="UPIBtn_Click"
+                                    ImageSource="{StaticResource currency_inrDrawingImage}"
+                                    LabelText="UPI" />
+                                <local:FlatButton
+                                    x:Name="BarcodeBtn"
+                                    Grid.Row="10"
+                                    Grid.Column="3"
+                                    Click="BarcodeBtn_Click"
+                                    ImageSource="{StaticResource barcodeDrawingImage}"
+                                    LabelText="Barcode" />
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
@@ -336,6 +350,21 @@
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <local:PageEmail />
+                        </TabItem>
+                        <TabItem Visibility="Collapsed">
+                            <local:PageSMS />
+                        </TabItem>
+                        <TabItem Visibility="Collapsed">
+                            <local:PageLocation />
+                        </TabItem>
+                        <TabItem Visibility="Collapsed">
+                            <local:PageEvent />
+                        </TabItem>
+                        <TabItem Visibility="Collapsed">
+                            <local:PageUPI />
+                        </TabItem>
+                        <TabItem Visibility="Collapsed">
+                            <local:PageBarcode />
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <TextBox Text="Hello, World!" />

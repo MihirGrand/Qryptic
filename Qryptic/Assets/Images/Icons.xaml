@@ -1,6 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <FontFamily x:Key="Batangas">/Assets/Fonts/#Batangas</FontFamily>
     <FontFamily x:Key="SpaceGrotesk">/Assets/Fonts/#Space Grotesk</FontFamily>
+    <DrawingImage x:Key="currency_inrDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+                <GeometryDrawing Brush="#FF22181C" Geometry="F1 M256,256z M0,0z M208,80A8,8,0,0,1,200,88L167.85,88C167.94,89.32,168,90.65,168,92A60.07,60.07,0,0,1,108,152L92.69,152 165.38,218.08A8,8,0,1,1,154.62,229.92L66.62,149.92A8,8,0,0,1,72,136L108,136A44.05,44.05,0,0,0,152,92C152,90.65,151.93,89.32,151.81,88L72,88A8,8,0,0,1,72,72L147.17,72A44,44,0,0,0,108,48L72,48A8,8,0,0,1,72,32L200,32A8,8,0,0,1,200,48L148.74,48A60.13,60.13,0,0,1,164.56,72L200,72A8,8,0,0,1,208,80z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <DrawingImage x:Key="check_boldDrawingImage">
         <DrawingImage.Drawing>
             <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
