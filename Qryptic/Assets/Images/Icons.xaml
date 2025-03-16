@@ -1,6 +1,20 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <FontFamily x:Key="Batangas">/Assets/Fonts/#Batangas</FontFamily>
     <FontFamily x:Key="SpaceGrotesk">/Assets/Fonts/#Space Grotesk</FontFamily>
+    <DrawingImage x:Key="check_boldDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M256,256z M0,0z M232.49,80.49L104.49,208.49A12,12,0,0,1,87.49,208.49L31.49,152.49A12,12,0,1,1,48.49,135.49L96,183 215.51,63.51A12,12,0,0,1,232.51,80.51z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
+    <DrawingImage x:Key="x_boldDrawingImage">
+        <DrawingImage.Drawing>
+            <DrawingGroup ClipGeometry="M0,0 V256 H256 V0 H0 Z">
+                <GeometryDrawing Brush="#FFFFFFFF" Geometry="F1 M256,256z M0,0z M208.49,191.51A12,12,0,0,1,191.49,208.51L128,145 64.49,208.49A12,12,0,0,1,47.49,191.49L111,128 47.51,64.49A12,12,0,0,1,64.51,47.49L128,111 191.51,47.48A12,12,0,0,1,208.51,64.48L145,128z" />
+            </DrawingGroup>
+        </DrawingImage.Drawing>
+    </DrawingImage>
     <Geometry x:Key="barcodeGeometry">F1 M256,256z M0,0z M232,48L232,88A8,8,0,0,1,216,88L216,56 184,56A8,8,0,0,1,184,40L224,40A8,8,0,0,1,232,48z M72,200L40,200 40,168A8,8,0,0,0,24,168L24,208A8,8,0,0,0,32,216L72,216A8,8,0,0,0,72,200z M224,160A8,8,0,0,0,216,168L216,200 184,200A8,8,0,0,0,184,216L224,216A8,8,0,0,0,232,208L232,168A8,8,0,0,0,224,160z M32,96A8,8,0,0,0,40,88L40,56 72,56A8,8,0,0,0,72,40L32,40A8,8,0,0,0,24,48L24,88A8,8,0,0,0,32,96z M80,80A8,8,0,0,0,72,88L72,168A8,8,0,0,0,88,168L88,88A8,8,0,0,0,80,80z M184,168L184,88A8,8,0,0,0,168,88L168,168A8,8,0,0,0,184,168z M144,80A8,8,0,0,0,136,88L136,168A8,8,0,0,0,152,168L152,88A8,8,0,0,0,144,80z M112,80A8,8,0,0,0,104,88L104,168A8,8,0,0,0,120,168L120,88A8,8,0,0,0,112,80z</Geometry>
     <DrawingGroup x:Key="barcodeDrawingGroup" ClipGeometry="M0,0 V256 H256 V0 H0 Z">
         <GeometryDrawing Brush="#FF22181C" Geometry="{StaticResource barcodeGeometry}" />

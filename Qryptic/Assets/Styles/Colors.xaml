@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="Focus" Color="#EF626C" />
+    <Color x:Key="FocusClr">#EF626C</Color>
+    <SolidColorBrush x:Key="Defocus" Color="#DEE2E6" />
+    <Color x:Key="DefocusClr">#DEE2E6</Color>
+</ResourceDictionary>

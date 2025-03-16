@@ -9,6 +9,7 @@ namespace Qryptic
     /// </summary>
     public partial class App : Application
     {
+
     }
 
 }

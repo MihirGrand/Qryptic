@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ZXing.QrCode;
 using ZXing.Windows.Compatibility;
 
 namespace Qryptic
@@ -24,7 +25,9 @@ namespace Qryptic
 
         private FilterInfoCollection? videoDevices;
         private VideoCaptureDevice? videoSource;
-        private readonly BarcodeReader? qrReader;
+        private BarcodeReader? qrReader;
+
+        private ViewModel viewModel = ViewModel.Instance;
 
         public MainWindow()
         {
@@ -35,11 +38,66 @@ namespace Qryptic
 
             blinksb = FindResource("blinksb") as Storyboard;
 
-            qrReader = new BarcodeReader();
+            qrReader = new BarcodeReader
+            {
+                AutoRotate = true,
+                Options = new ZXing.Common.DecodingOptions
+                {
+                    TryHarder = true,
+                    //PossibleFormats = new List<ZXing.BarcodeFormat> { ZXing.BarcodeFormat.QR_CODE }
+                }
+            };
 
             //Sample();
 
             StartCamera();
+
+            this.DataContext = viewModel;
+            viewModel.AnimationRequested += ViewModel_AnimationRequested;
+        }
+
+        Thickness lower = new(10, 10, 10, -75);
+        Thickness upper = new(10);
+
+        private void ViewModel_AnimationRequested(object? sender, ToastEventArgs e)
+        {
+            toast_title.Content = e.Title;
+            toast_msg.Content = e.Message;
+            if(e.Type == ToastType.Success)
+            {
+                toast_icon.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "check_boldDrawingImage");
+            } else {
+                toast_icon.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "x_boldDrawingImage");
+            }
+
+            Storyboard storyboard = new();
+
+            ThicknessAnimation forwardAnimation = new()
+            {
+                From = lower,
+                To = upper,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut },
+                BeginTime = TimeSpan.FromSeconds(0)
+            };
+
+            ThicknessAnimation reverseAnimation = new()
+            {
+                From = upper,
+                To = lower,
+                Duration = TimeSpan.FromSeconds(0.3),
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut },
+                BeginTime = TimeSpan.FromSeconds(2)
+            };
+
+            storyboard.Children.Add(forwardAnimation);
+            storyboard.Children.Add(reverseAnimation);
+            Storyboard.SetTarget(forwardAnimation, toast);
+            Storyboard.SetTarget(reverseAnimation, toast);
+            Storyboard.SetTargetProperty(forwardAnimation, new PropertyPath(MarginProperty));
+            Storyboard.SetTargetProperty(reverseAnimation, new PropertyPath(MarginProperty));
+
+            storyboard.Begin();
         }
 
         private void StartUpDownAnimation()
@@ -75,15 +133,28 @@ namespace Qryptic
 
         private void VideoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            try
+            if(eventArgs.Frame != null)
             {
-                Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone();
-                WebcamFeed.Dispatcher.Invoke(() =>
+                try
                 {
-                    WebcamFeed.ImageSource = BitmapToImageSource(bitmap);
-                });
-                if(qrReader != null)
-                {
+                    Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone();
+                    if (bitmap == null || bitmap.Width == 0 || bitmap.Height == 0)
+                    {
+                        return;
+                    }
+                    WebcamFeed.Dispatcher.Invoke(() =>
+                    {
+                        WebcamFeed.ImageSource = BitmapToImageSource(bitmap);
+                    });
+                    qrReader ??= new BarcodeReader
+                    {
+                        AutoRotate = true,
+                        Options = new ZXing.Common.DecodingOptions
+                        {
+                            TryHarder = true,
+                            //PossibleFormats = new List<ZXing.BarcodeFormat> { ZXing.BarcodeFormat.QR_CODE }
+                        }
+                    };
                     var result = qrReader.Decode(bitmap);
                     if (result != null)
                     {
@@ -93,10 +164,11 @@ namespace Qryptic
                         });
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error decoding QR code: " + ex.Message);
+                    Debug.WriteLine("Stack Trace: " + ex.StackTrace);
+                }
             }
         }
 
@@ -206,7 +278,7 @@ namespace Qryptic
                     Duration = new Duration(TimeSpan.FromSeconds(0.1)),
                     EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
                 };
-                Navigator.SelectedIndex = index;
+                viewModel.NavigateTo(index);
                 height2Animation.Completed += (s, e) =>
                 {
                     if (index == 3)
@@ -245,22 +317,22 @@ namespace Qryptic
 
         private void TextBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(4);
         }
 
         private void WebBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(5);
         }
 
         private void ContactBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(6);
         }
 
         private void WifiBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            viewModel.NavigateTo(7);
         }
 
         private void EmailBtn_Click(object sender, RoutedEventArgs e)
