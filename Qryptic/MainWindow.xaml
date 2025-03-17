@@ -191,39 +191,174 @@
                         BorderThickness="0"
                         SelectedIndex="{Binding CurrentPage}">
                         <TabItem Visibility="Collapsed">
-                            <Grid
-                                x:Name="ScannerGrid"
-                                Width="250"
-                                Height="200"
-                                VerticalAlignment="Top">
-                                <Border
-                                    Width="200"
-                                    Height="200"
-                                    BorderBrush="#22181C"
-                                    BorderThickness="2"
-                                    ClipToBounds="True"
-                                    CornerRadius="15">
-                                    <Border.Background>
-                                        <ImageBrush x:Name="WebcamFeed" Stretch="UniformToFill" />
-                                    </Border.Background>
-                                </Border>
-                                <Rectangle
-                                    x:Name="Scanner"
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="0.1*" />
+                                    <RowDefinition Height="0.8*" />
+                                </Grid.RowDefinitions>
+                                <Grid
+                                    x:Name="ScannerGrid"
                                     Width="250"
-                                    Height="5"
-                                    VerticalAlignment="Top"
-                                    Fill="#EF626C"
-                                    RadiusX="2"
-                                    RadiusY="2">
-                                    <Rectangle.Effect>
-                                        <DropShadowEffect
-                                            BlurRadius="4"
-                                            Direction="-90"
-                                            Opacity="0.4"
-                                            ShadowDepth="2"
-                                            Color="#EF626C" />
-                                    </Rectangle.Effect>
-                                </Rectangle>
+                                    Height="200"
+                                    Margin="0,0,0,10"
+                                    VerticalAlignment="Bottom">
+                                    <Border
+                                        x:Name="WebcamBorder"
+                                        Width="200"
+                                        Height="200"
+                                        BorderBrush="#22181C"
+                                        BorderThickness="2"
+                                        ClipToBounds="True"
+                                        CornerRadius="15">
+                                        <Border.Background>
+                                            <ImageBrush x:Name="WebcamFeed" Stretch="UniformToFill" />
+                                        </Border.Background>
+                                        <Border
+                                            x:Name="UploadBtn"
+                                            Height="40"
+                                            Margin="-1"
+                                            VerticalAlignment="Bottom"
+                                            Background="White"
+                                            BorderBrush="#22181C"
+                                            BorderThickness="1"
+                                            CornerRadius="10 10 15 15"
+                                            Cursor="Hand"
+                                            PreviewMouseLeftButtonDown="UploadBtn_PreviewMouseLeftButtonDown">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <Image Margin="0,10" Source="{DynamicResource floppy_disk_back_fillDrawingImage}" />
+                                                <Label VerticalAlignment="Center" Content="Upload" />
+                                            </StackPanel>
+                                            <Border.Triggers>
+                                                <EventTrigger RoutedEvent="MouseEnter">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation
+                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                To="#ddd1d3"
+                                                                Duration="0:0:0.15" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                                <EventTrigger RoutedEvent="MouseLeave">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation
+                                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                                To="White"
+                                                                Duration="0:0:0.15" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Border.Triggers>
+                                        </Border>
+                                    </Border>
+                                    <Rectangle
+                                        x:Name="Scanner"
+                                        Width="250"
+                                        Height="5"
+                                        VerticalAlignment="Top"
+                                        Fill="#EF626C"
+                                        RadiusX="2"
+                                        RadiusY="2">
+                                        <Rectangle.Effect>
+                                            <DropShadowEffect
+                                                BlurRadius="4"
+                                                Direction="-90"
+                                                Opacity="0.4"
+                                                ShadowDepth="2"
+                                                Color="#EF626C" />
+                                        </Rectangle.Effect>
+                                    </Rectangle>
+                                </Grid>
+                                <StackPanel
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Center"
+                                    Orientation="Horizontal">
+                                    <Label Content="Live Mode" />
+                                    <CheckBox
+                                        Checked="CheckBox_Checked"
+                                        IsChecked="{Binding LiveMode}"
+                                        Style="{DynamicResource SwitchCheckBoxStyle}"
+                                        Unchecked="CheckBox_Unchecked" />
+                                    <Label Content="Static Mode" />
+                                </StackPanel>
+                                <Border
+                                    Grid.Row="2"
+                                    Margin="30,10,30,40"
+                                    BorderBrush="#22181C"
+                                    BorderThickness="1"
+                                    CornerRadius="12">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="3*" />
+                                            <RowDefinition Height="1.3*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="0.5*" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Border
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            BorderThickness="0,0,1.5,0">
+                                            <Image
+                                                x:Name="qrType"
+                                                Margin="20"
+                                                Source="{DynamicResource user_circleDrawingImage}" />
+                                            <Border.BorderBrush>
+                                                <VisualBrush>
+                                                    <VisualBrush.Visual>
+                                                        <Rectangle
+                                                            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}"
+                                                            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"
+                                                            Stroke="#22181C"
+                                                            StrokeDashArray="4 4"
+                                                            StrokeThickness="2" />
+                                                    </VisualBrush.Visual>
+                                                </VisualBrush>
+                                            </Border.BorderBrush>
+                                        </Border>
+                                        <TextBlock
+                                            x:Name="decoded"
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Text="Loading..."
+                                            TextWrapping="Wrap" />
+                                        <Border
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="2"
+                                            Margin="-1"
+                                            BorderBrush="#22181C"
+                                            BorderThickness="0.8"
+                                            CornerRadius="12">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <Button
+                                                    x:Name="BtnCopy"
+                                                    Grid.Column="0"
+                                                    Background="Transparent"
+                                                    Content="Copy"
+                                                    FontSize="14"
+                                                    Style="{DynamicResource FlatButtonStyle_3}"
+                                                    Tag="{DynamicResource copy_fillDrawingImage}" />
+                                                <Button
+                                                    x:Name="BtnSave"
+                                                    Grid.Column="1"
+                                                    Background="Transparent"
+                                                    Content="Save"
+                                                    FontSize="14"
+                                                    Style="{DynamicResource FlatButtonStyle_2}"
+                                                    Tag="{DynamicResource floppy_disk_back_fillDrawingImage}" />
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </Border>
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
@@ -331,10 +466,72 @@
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
-                            <Label Content="Cache" />
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Content="Cache"
+                                    FontFamily="{StaticResource SpaceGrotesk}"
+                                    FontSize="22"
+                                    FontWeight="Bold" />
+                            </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
-                            <Label Content="Config" />
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.4*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    VerticalAlignment="Bottom"
+                                    Content="Config"
+                                    FontFamily="{DynamicResource SpaceGrotesk}"
+                                    FontSize="22"
+                                    FontWeight="Bold" />
+                            </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <local:PageText />

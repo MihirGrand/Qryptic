@@ -12,8 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ZXing.Common;
+using ZXing;
 using ZXing.QrCode;
 using ZXing.Windows.Compatibility;
+using System.Windows.Documents;
+using System.Xml;
+using Microsoft.Win32;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Qryptic
 {
@@ -50,10 +56,30 @@ namespace Qryptic
 
             //Sample();
 
-            StartCamera();
+            //StartCamera();
 
             this.DataContext = viewModel;
             viewModel.AnimationRequested += ViewModel_AnimationRequested;
+            viewModel.ModeChanged += ViewModel_ModeChanged;
+        }
+
+        private void ViewModel_ModeChanged(object? sender, EventArgs e)
+        {
+            if(viewModel.LiveMode == true)
+            {
+                if (videoSource != null && videoSource.IsRunning)
+                {
+                    videoSource.SignalToStop();
+                    videoSource.WaitForStop();
+                }
+                WebcamFeed.ImageSource = null;
+                UploadBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                StartCamera();
+                UploadBtn.Visibility = Visibility.Hidden;
+            }
         }
 
         Thickness lower = new(10, 10, 10, -75);
@@ -102,7 +128,7 @@ namespace Qryptic
 
         private void StartUpDownAnimation()
         {
-            double maxHeight = ScannerGrid.ActualHeight - Scanner.Height;
+            double maxHeight = ScannerGrid.ActualHeight - Scanner.Height - 40;
 
             ThicknessAnimation upDownAnimation = new()
             {
@@ -133,42 +159,76 @@ namespace Qryptic
 
         private void VideoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            if(eventArgs.Frame != null)
+            // Check if the frame is null
+            if (eventArgs.Frame == null)
             {
-                try
+                Debug.WriteLine("eventArgs.Frame is null.");
+                return;
+            }
+
+            try
+            {
+                // Clone the frame to avoid access violations
+                using (Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone())
                 {
-                    Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone();
+                    // Check if the bitmap is valid
                     if (bitmap == null || bitmap.Width == 0 || bitmap.Height == 0)
                     {
+                        Debug.WriteLine("Invalid bitmap.");
                         return;
                     }
+
+                    // Update the UI with the new frame
                     WebcamFeed.Dispatcher.Invoke(() =>
                     {
                         WebcamFeed.ImageSource = BitmapToImageSource(bitmap);
                     });
+
+                    // Initialize the BarcodeReader if it is null
                     qrReader ??= new BarcodeReader
                     {
-                        AutoRotate = true,
+                        //AutoRotate = true,
                         Options = new ZXing.Common.DecodingOptions
                         {
-                            TryHarder = true,
-                            //PossibleFormats = new List<ZXing.BarcodeFormat> { ZXing.BarcodeFormat.QR_CODE }
+                            //TryHarder = true,
                         }
                     };
-                    var result = qrReader.Decode(bitmap);
-                    if (result != null)
+
+                    try
                     {
-                        Dispatcher.Invoke(() =>
+                        var result = qrReader.Decode(bitmap);
+                        if (result != null)
                         {
-                            MessageBox.Show(result.Text);
-                        });
+                            if(result.BarcodeFormat == BarcodeFormat.QR_CODE)
+                            {
+                                if(result.Text.StartsWith("http:"))
+                                {
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "globe_simpleDrawingImage");
+                                        decoded.Inlines.Clear();
+                                        decoded.Inlines.Add(new Bold(new Run("URL: ")));
+                                        decoded.Inlines.Add(new Run(result.Text));
+                                    });
+                                }
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                    }
+                    catch (Exception decodeEx)
+                    {
+                        Debug.WriteLine("Error decoding barcode/QR code: " + decodeEx.Message);
+                        Debug.WriteLine("Stack Trace: " + decodeEx.StackTrace);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Error decoding QR code: " + ex.Message);
-                    Debug.WriteLine("Stack Trace: " + ex.StackTrace);
-                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception: " + ex.Message);
+                Debug.WriteLine("Stack Trace: " + ex.StackTrace);
             }
         }
 
@@ -239,7 +299,7 @@ namespace Qryptic
         {
            if(MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
            {
-                Application.Current.Shutdown();
+                System.Windows.Application.Current.Shutdown();
            }
         }
 
@@ -269,7 +329,7 @@ namespace Qryptic
 
         void Navigate(int index)
         {
-            if (Navigator.TabIndex != index)
+            if (Navigator.SelectedIndex != index)
             {
                 DoubleAnimation height2Animation = new()
                 {
@@ -363,6 +423,69 @@ namespace Qryptic
         private void BarcodeBtn_Click(object sender, RoutedEventArgs e)
         {
             viewModel.NavigateTo(13);
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+           //UploadBtn.Visibility = Visibility.Visible;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+           //UploadBtn.Visibility = Visibility.Hidden;
+        }
+
+        private void UploadBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = "Select an Image",
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures)
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                WebcamFeed.ImageSource = new BitmapImage(new Uri(openFileDialog.FileName));
+                qrReader ??= new BarcodeReader
+                {
+                    //AutoRotate = true,
+                    Options = new ZXing.Common.DecodingOptions
+                    {
+                        TryHarder = true,
+                    }
+                };
+                var result = qrReader.Decode((Bitmap)Bitmap.FromFile(openFileDialog.FileName));
+                if (result != null)
+                {
+                    if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
+                    {
+                        if (result.Text.StartsWith("http:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "globe_simpleDrawingImage");
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("URL: ")));
+                                decoded.Inlines.Add(new Run(result.Text));
+                            });
+                        } else if (result.Text.StartsWith("BEGIN:VCARD"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "user_circleDrawingImage");
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("URL: ")));
+                                decoded.Inlines.Add(new Run(result.Text));
+                            });
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
         }
     }
 }

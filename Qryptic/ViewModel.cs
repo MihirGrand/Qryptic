@@ -2,9 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Qryptic
 {
@@ -30,10 +33,18 @@ namespace Qryptic
         }
     }
 
+    public enum CodeType
+    {
+       Text, Website, Contact, Wifi, Email, SMS, Location, Event, UPI, Barcode, None
+    }
+
     public partial class ViewModel: ObservableObject
     {
         [ObservableProperty]
         public int currentPage = 0;
+
+        [ObservableProperty]
+        public bool liveMode = true;
 
         public void ShowToast(String title, String message, ToastType type)
         {
@@ -41,6 +52,23 @@ namespace Qryptic
         }
 
         public event EventHandler<ToastEventArgs>? AnimationRequested;
+
+        public event EventHandler? ModeChanged;
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            Debug.WriteLine(e.PropertyName);
+
+            switch (e.PropertyName)
+            {
+                case nameof(LiveMode):
+                    ModeChanged?.Invoke(this, EventArgs.Empty);
+                    break;
+            }
+        }
+
+
 
         void BackToMenu()
         {
