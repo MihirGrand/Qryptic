@@ -23,6 +23,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Globalization;
+using static QRCoder.PayloadGenerator;
 
 namespace Qryptic
 {
@@ -37,6 +38,8 @@ namespace Qryptic
         private BarcodeReader? qrReader;
 
         private ViewModel viewModel = ViewModel.Instance;
+
+        string decodedStr = "";
 
         public MainWindow()
         {
@@ -73,6 +76,7 @@ namespace Qryptic
                 if (videoSource != null && videoSource.IsRunning)
                 {
                     videoSource.SignalToStop();
+                    //videoSource.Stop();
                     videoSource.WaitForStop();
                 }
                 WebcamFeed.ImageSource = null;
@@ -461,6 +465,7 @@ namespace Qryptic
                 var result = qrReader.Decode((Bitmap)Bitmap.FromFile(openFileDialog.FileName));
                 if (result != null)
                 {
+                    decodedStr = result.Text;
                     if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
                     {
                         if (result.Text.StartsWith("http:"))
@@ -649,7 +654,7 @@ namespace Qryptic
                     }
                 } else
                 {
-                    Debug.WriteLine("Empty!");
+                    decodedStr = "";
                 }
             }
         }
@@ -667,6 +672,329 @@ namespace Qryptic
                 return date.ToString("dd.MM.yyyy");
             }
             return "Invalid Date";
+        }
+
+        private void BtnCopy_Click(object sender, RoutedEventArgs e)
+        {
+            if (decodedStr != "")
+            {
+                if (decodedStr.StartsWith("http:"))
+                {
+                    Clipboard.SetText(decodedStr);
+                    viewModel.ShowToast("Copied", "URL copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("BEGIN:VCARD"))
+                {
+                    string name = ExtractValue(decodedStr, @"FN:(.+)");
+                    string phone = ExtractValue(decodedStr, @"TEL[^:]*:(\d+)");
+                    string email = ExtractValue(decodedStr, @"EMAIL:(.+)");
+                    Clipboard.SetText($"Name: {name}\nPhone: {phone}\nEmail: {email}");
+                    viewModel.ShowToast("Copied", "Contact copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("WIFI:"))
+                {
+                    var split = decodedStr.Split(';');
+                    string ssid = split[1].Replace("S:", "");
+                    string pw = split[2].Replace("P:", "");
+                    Clipboard.SetText($"SSID: {ssid}\nPassword: {pw}");
+                    viewModel.ShowToast("Copied", "Creds copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("mailto:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                    string subject = queryParams["subject"] ?? "";
+                    string body = queryParams["body"] ?? "";
+                    subject = HttpUtility.UrlDecode(subject);
+                    body = HttpUtility.UrlDecode(body);
+
+                    Clipboard.SetText($"To: {decodedStr.Split('?')[0].Replace("mailto:", "")}\nSubject: {subject}\nBody: {body}");
+                    viewModel.ShowToast("Copied", "Mail copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("sms:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                    string body = queryParams["body"] ?? "";
+                    body = HttpUtility.UrlDecode(body);
+
+                    Clipboard.SetText($"To: {decodedStr.Split('?')[0].Replace("sms:", "")}\nMessage: {body}");
+                    viewModel.ShowToast("Copied", "SMS copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("geo:"))
+                {
+                    var split = decodedStr.Replace("geo:", "").Split(',');
+
+                    Clipboard.SetText($"Lat: {split[0]}, Long: {split[1]}");
+                    viewModel.ShowToast("Copied", "Coords copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("BEGIN:VEVENT"))
+                {
+                    string title = ExtractValue(decodedStr, @"SUMMARY:(.+)");
+                    string description = ExtractValue(decodedStr, @"DESCRIPTION:(.+)");
+                    string location = ExtractValue(decodedStr, @"LOCATION:(.+)");
+                    string startDateRaw = ExtractValue(decodedStr, @"DTSTART:(\d+)");
+                    string endDateRaw = ExtractValue(decodedStr, @"DTEND:(\d+)");
+
+                    string startDate = FormatDate(startDateRaw);
+                    string endDate = FormatDate(endDateRaw);
+
+                    Clipboard.SetText($"Event Title: {title}\nDescription: {description}\nLocation: {location}\nStart: {startDate} | End: {endDate}");
+                    viewModel.ShowToast("Copied", "Details copied to clipboard", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("upi:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+
+                    string upiId = queryParams["pa"] ?? "Not Found";
+                    string payeeName = queryParams["pn"] ?? "Not Found";
+                    string amount = queryParams["am"] ?? "0";
+                    string currency = queryParams["cu"] ?? "Not Found";
+                    string note = queryParams["tn"] ?? "";
+                    string amountWithCurrency = $"{amount} {currency}";
+
+                    Clipboard.SetText($"UPI ID: {upiId}");
+                    viewModel.ShowToast("Copied", "UPI ID copied to clipboard", ToastType.Success);
+                }
+                else
+                {
+                    Clipboard.SetText(decodedStr);
+                    viewModel.ShowToast("Copied", "Text copied to clipboard", ToastType.Success);
+                }
+            }
+        }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (decodedStr != "")
+            {
+                if (decodedStr.StartsWith("http:"))
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save URL",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, decodedStr);
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "URL saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("BEGIN:VCARD"))
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Contact|*.vcard",
+                        Title = "Save Contact",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, decodedStr);
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "Contact saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("WIFI:"))
+                {
+                    var split = decodedStr.Split(';');
+                    string ssid = split[1].Replace("S:", "");
+                    string pw = split[2].Replace("P:", "");
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save Wifi Credentials",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, $"SSID: {ssid}\nPassword: {pw}");
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "Wifi Creds saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("mailto:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                    string subject = queryParams["subject"] ?? "";
+                    string body = queryParams["body"] ?? "";
+                    subject = HttpUtility.UrlDecode(subject);
+                    body = HttpUtility.UrlDecode(body);
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save Email",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, $"To: {decodedStr.Split('?')[0].Replace("mailto:", "")}\nSubject: {subject}\nBody: {body}");
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "Mail saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("sms:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                    string body = queryParams["body"] ?? "";
+                    body = HttpUtility.UrlDecode(body);
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save SMS",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, $"To: {decodedStr.Split('?')[0].Replace("sms:", "")}\nMessage: {body}");
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "SMS saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("geo:"))
+                {
+                    var split = decodedStr.Replace("geo:", "").Split(',');
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save Location",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, $"Lat: {split[0]}, Long: {split[1]}");
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "Co-ordinates saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("BEGIN:VEVENT"))
+                {
+                    string title = ExtractValue(decodedStr, @"SUMMARY:(.+)");
+                    string description = ExtractValue(decodedStr, @"DESCRIPTION:(.+)");
+                    string location = ExtractValue(decodedStr, @"LOCATION:(.+)");
+                    string startDateRaw = ExtractValue(decodedStr, @"DTSTART:(\d+)");
+                    string endDateRaw = ExtractValue(decodedStr, @"DTEND:(\d+)");
+
+                    string startDate = FormatDate(startDateRaw);
+                    string endDate = FormatDate(endDateRaw);
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Event File|*.ics",
+                        Title = "Save Event",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, decodedStr);
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "Event saved!", ToastType.Success);
+                }
+                else if (decodedStr.StartsWith("upi:"))
+                {
+                    Uri uri = new Uri(decodedStr);
+                    var queryParams = HttpUtility.ParseQueryString(uri.Query);
+
+                    string upiId = queryParams["pa"] ?? "Not Found";
+                    string payeeName = queryParams["pn"] ?? "Not Found";
+                    string amount = queryParams["am"] ?? "0";
+                    string currency = queryParams["cu"] ?? "Not Found";
+                    string note = queryParams["tn"] ?? "";
+                    string amountWithCurrency = $"{amount} {currency}";
+
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save UPI Details",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, $"UPI ID: {upiId}");
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "UPI Details saved!", ToastType.Success);
+                }
+                else
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Text File|*.txt",
+                        Title = "Save URL",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            File.WriteAllText(saveFileDialog.FileName, decodedStr);
+                        }
+                        catch (Exception ex)
+                        {
+                            viewModel.ShowToast("Save Error", ex.Message, ToastType.Error);
+                        }
+                    }
+                    viewModel.ShowToast("Saved", "URL saved!", ToastType.Success);
+                }
+            }
         }
     }
 }
