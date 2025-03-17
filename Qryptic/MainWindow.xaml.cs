@@ -20,6 +20,9 @@ using System.Windows.Documents;
 using System.Xml;
 using Microsoft.Win32;
 using static System.Net.Mime.MediaTypeNames;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Globalization;
 
 namespace Qryptic
 {
@@ -449,7 +452,7 @@ namespace Qryptic
                 WebcamFeed.ImageSource = new BitmapImage(new Uri(openFileDialog.FileName));
                 qrReader ??= new BarcodeReader
                 {
-                    //AutoRotate = true,
+                    AutoRotate = true,
                     Options = new ZXing.Common.DecodingOptions
                     {
                         TryHarder = true,
@@ -469,23 +472,201 @@ namespace Qryptic
                                 decoded.Inlines.Add(new Bold(new Run("URL: ")));
                                 decoded.Inlines.Add(new Run(result.Text));
                             });
-                        } else if (result.Text.StartsWith("BEGIN:VCARD"))
+                        }
+                        else if (result.Text.StartsWith("BEGIN:VCARD"))
                         {
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "user_circleDrawingImage");
+                                string name = ExtractValue(result.Text, @"FN:(.+)");
+                                string phone = ExtractValue(result.Text, @"TEL[^:]*:(\d+)");
+                                string email = ExtractValue(result.Text, @"EMAIL:(.+)");
                                 decoded.Inlines.Clear();
-                                decoded.Inlines.Add(new Bold(new Run("URL: ")));
+                                decoded.Inlines.Add(new Bold(new Run("Name: ")));
+                                decoded.Inlines.Add(new Run(name));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Phone: ")));
+                                decoded.Inlines.Add(new Run(phone));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Email: ")));
+                                decoded.Inlines.Add(new Run(email));
+                            });
+                        }
+                        else if (result.Text.StartsWith("WIFI:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "wifi_highDrawingImage");
+                                var split = result.Text.Split(';');
+                                string ssid = split[1].Replace("S:", "");
+                                string pw = split[2].Replace("P:", "");
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("SSID: ")));
+                                decoded.Inlines.Add(new Run(ssid));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("PW: ")));
+                                decoded.Inlines.Add(new Run(pw));
+                            });
+                        }
+                        else if (result.Text.StartsWith("mailto:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "envelopeDrawingImage");
+                                Uri uri = new Uri(result.Text);
+                                var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                                string subject = queryParams["subject"] ?? "";
+                                string body = queryParams["body"] ?? "";
+                                subject = HttpUtility.UrlDecode(subject);
+                                body = HttpUtility.UrlDecode(body);
+
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("To: ")));
+                                decoded.Inlines.Add(new Run(result.Text.Split('?')[0].Replace("mailto:", "")));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Subject: ")));
+                                decoded.Inlines.Add(new Run(subject));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Body: ")));
+                                decoded.Inlines.Add(new Run(body));
+                            });
+                        }
+                        else if (result.Text.StartsWith("sms:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "chat_dotsDrawingImage");
+                                Uri uri = new Uri(result.Text);
+                                var queryParams = HttpUtility.ParseQueryString(uri.Query);
+                                string body = queryParams["body"] ?? "";
+                                body = HttpUtility.UrlDecode(body);
+
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("To: ")));
+                                decoded.Inlines.Add(new Run(result.Text.Split('?')[0].Replace("sms:", "")));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Message: ")));
+                                decoded.Inlines.Add(new Run(body));
+                            });
+                        }
+                        else if (result.Text.StartsWith("geo:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "map_pinDrawingImage");
+                                var split = result.Text.Replace("geo:", "").Split(',');
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("Lat: ")));
+                                decoded.Inlines.Add(new Run(split[0]));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Long: ")));
+                                decoded.Inlines.Add(new Run(split[1]));
+                            });
+                        }
+                        else if (result.Text.StartsWith("BEGIN:VEVENT"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "calendar_dotsDrawingImage");
+
+                                string title = ExtractValue(result.Text, @"SUMMARY:(.+)");
+                                string description = ExtractValue(result.Text, @"DESCRIPTION:(.+)");
+                                string location = ExtractValue(result.Text, @"LOCATION:(.+)");
+                                string startDateRaw = ExtractValue(result.Text, @"DTSTART:(\d+)");
+                                string endDateRaw = ExtractValue(result.Text, @"DTEND:(\d+)");
+
+                                // Convert date format YYYYMMDD → DD.MM.YYYY
+                                string startDate = FormatDate(startDateRaw);
+                                string endDate = FormatDate(endDateRaw);
+
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("Title: ")));
+                                decoded.Inlines.Add(new Run(title));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Description: ")));
+                                decoded.Inlines.Add(new Run(description));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Location: ")));
+                                decoded.Inlines.Add(new Run(location));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Start: ")));
+                                decoded.Inlines.Add(new Run(startDate));
+                                decoded.Inlines.Add(new Bold(new Run("   End: ")));
+                                decoded.Inlines.Add(new Run(endDate));
+                            });
+                        }
+                        else if (result.Text.StartsWith("upi:"))
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "currency_inrDrawingImage");
+
+                                Uri uri = new Uri(result.Text);
+                                var queryParams = HttpUtility.ParseQueryString(uri.Query);
+
+                                string upiId = queryParams["pa"] ?? "Not Found";
+                                string payeeName = queryParams["pn"] ?? "Not Found";
+                                string amount = queryParams["am"] ?? "0";
+                                string currency = queryParams["cu"] ?? "Not Found";
+                                string note = queryParams["tn"] ?? "";
+                                string amountWithCurrency = $"{amount} {currency}";
+
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("UPI ID: ")));
+                                decoded.Inlines.Add(new Run(upiId));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Payee: ")));
+                                decoded.Inlines.Add(new Run(payeeName));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Amount: ")));
+                                decoded.Inlines.Add(new Run(amountWithCurrency));
+                                decoded.Inlines.Add(new LineBreak());
+                                decoded.Inlines.Add(new Bold(new Run("Note: ")));
+                                decoded.Inlines.Add(new Run(note));
+                            });
+                        }
+                        else
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "article_ny_timesDrawingImage");
+                                decoded.Inlines.Clear();
+                                decoded.Inlines.Add(new Bold(new Run("Text: ")));
                                 decoded.Inlines.Add(new Run(result.Text));
+                                Debug.WriteLine(result.Text);
                             });
                         }
                     }
                     else
                     {
-
+                        Dispatcher.Invoke(() =>
+                        {
+                            qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "barcodeDrawingImage");
+                            decoded.Inlines.Clear();
+                            decoded.Inlines.Add(new Bold(new Run("Data: ")));
+                            decoded.Inlines.Add(new Run(result.Text));
+                        });
                     }
+                } else
+                {
+                    Debug.WriteLine("Empty!");
                 }
             }
+        }
+
+        static string ExtractValue(string text, string pattern)
+        {
+            Match match = Regex.Match(text, pattern, RegexOptions.Multiline);
+            return match.Success ? match.Groups[1].Value.Trim() : "Not found";
+        }
+
+        static string FormatDate(string rawDate)
+        {
+            if (DateTime.TryParseExact(rawDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+            {
+                return date.ToString("dd.MM.yyyy");
+            }
+            return "Invalid Date";
         }
     }
 }
