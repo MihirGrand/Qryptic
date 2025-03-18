@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageBarcode"
+    x:Class="Qryptic.PageWifi"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,10 +11,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.5*" />
             <RowDefinition Height="0.3*" />
             <RowDefinition />
-            <RowDefinition Height="0.35*" />
+            <RowDefinition Height="0.3*" />
         </Grid.RowDefinitions>
         <StackPanel
             x:Name="HeaderText"
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="Barcode"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Wifi Credentials"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -66,20 +66,42 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Text: "
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="SSID: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_text"
+                x:Name="tbox_ssid"
                 Grid.Column="1"
+                Margin="0,2"
                 FontSize="14"
                 FontWeight="Normal"
                 Style="{DynamicResource ModernTextBox}"
-                Tag="Enter Text" />
+                Tag="Enter WiFi SSID" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Password: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="14"
+                FontWeight="Medium" />
+            <TextBox
+                x:Name="tbox_pass"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,2"
+                FontSize="14"
+                FontWeight="Normal"
+                Style="{DynamicResource ModernTextBox}"
+                Tag="Enter WiFi Password" />
         </Grid>
         <Button
             Grid.Row="2"
@@ -92,7 +114,7 @@
         <Border
             Grid.Row="3"
             Grid.RowSpan="2"
-            Margin="30"
+            Margin="30,20"
             BorderBrush="#22181C"
             BorderThickness="1.4"
             CornerRadius="12">

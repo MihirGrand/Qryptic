@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageEvent"
+    x:Class="Qryptic.PageBarcode"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,8 +11,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.8*" />
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.3*" />
             <RowDefinition />
             <RowDefinition Height="0.35*" />
         </Grid.RowDefinitions>
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="Event"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Barcode"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -66,100 +66,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Event Title: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
+                Content="Text: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_title"
+                x:Name="tbox_text"
                 Grid.Column="1"
-                Margin="0,2"
-                FontSize="13"
+                FontSize="14"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter event title" />
-            <Label
-                Grid.Row="1"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="Description: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
-                FontWeight="Medium" />
-            <TextBox
-                x:Name="tbox_desc"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0,2"
-                FontSize="13"
-                FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter event description" />
-            <Label
-                Grid.Row="2"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="location: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
-                FontWeight="Medium" />
-            <TextBox
-                x:Name="tbox_location"
-                Grid.Row="2"
-                Grid.Column="1"
-                Margin="0,2"
-                FontSize="13"
-                FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter location of event" />
-            <Grid Grid.Row="3" Grid.ColumnSpan="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="0.2*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
-                </Grid.ColumnDefinitions>
-                <Label
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    Content="Start: "
-                    FontFamily="{StaticResource SpaceGrotesk}"
-                    FontSize="13"
-                    FontWeight="Medium" />
-                <TextBox
-                    x:Name="tbox_start"
-                    Grid.Column="1"
-                    Margin="0,2"
-                    FontSize="13"
-                    FontWeight="Normal"
-                    Style="{DynamicResource ModernTextBox_Thin}"
-                    Tag="Start Time" />
-                <Label
-                    Grid.Column="3"
-                    VerticalAlignment="Center"
-                    Content="End: "
-                    FontFamily="{StaticResource SpaceGrotesk}"
-                    FontSize="13"
-                    FontWeight="Medium" />
-                <TextBox
-                    x:Name="tbox_end"
-                    Grid.Column="4"
-                    Margin="0,2"
-                    FontSize="13"
-                    FontWeight="Normal"
-                    Style="{DynamicResource ModernTextBox_Thin}"
-                    Tag="End Time" />
-            </Grid>
+                Style="{DynamicResource ModernTextBox}"
+                Tag="Enter Text" />
         </Grid>
         <Button
             Grid.Row="2"
@@ -172,7 +92,7 @@
         <Border
             Grid.Row="3"
             Grid.RowSpan="2"
-            Margin="30,20"
+            Margin="30"
             BorderBrush="#22181C"
             BorderThickness="1.4"
             CornerRadius="12">

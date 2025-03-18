@@ -1,54 +1,47 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
-using System;
+using Microsoft.Win32;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ZXing.Common;
 using ZXing;
-using ZXing.QrCode;
 using ZXing.Windows.Compatibility;
-using System.Windows.Documents;
-using System.Xml;
-using Microsoft.Win32;
-using static System.Net.Mime.MediaTypeNames;
-using System.Text.RegularExpressions;
-using System.Web;
-using System.Globalization;
-using static QRCoder.PayloadGenerator;
 
 namespace Qryptic
 {
     public partial class MainWindow : Window
     {
-        private readonly Random random = new();
+        /*private readonly Random random = new();
         private readonly DispatcherTimer blinkTimer;
-        private readonly Storyboard? blinksb;
+        private readonly Storyboard? blinksb;*/
 
         private FilterInfoCollection? videoDevices;
         private VideoCaptureDevice? videoSource;
         private BarcodeReader? qrReader;
 
-        private ViewModel viewModel = ViewModel.Instance;
+        private readonly ViewModel viewModel = ViewModel.Instance;
 
         string decodedStr = "";
 
         public MainWindow()
         {
             InitializeComponent();
-            blinkTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(random.Next(2, 6)) };
+            /*blinkTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(random.Next(2, 6)) };
             blinkTimer.Tick += Blink;
             blinkTimer.Start();
 
-            blinksb = FindResource("blinksb") as Storyboard;
+            blinksb = FindResource("blinksb") as Storyboard;*/
 
             qrReader = new BarcodeReader
             {
@@ -60,27 +53,23 @@ namespace Qryptic
                 }
             };
 
-            //Sample();
-
-            //StartCamera();
-
             this.DataContext = viewModel;
             viewModel.AnimationRequested += ViewModel_AnimationRequested;
             viewModel.ModeChanged += ViewModel_ModeChanged;
+            viewModel.LoadItemsFromLiteDB();
         }
 
         private void ViewModel_ModeChanged(object? sender, EventArgs e)
         {
-            if(viewModel.LiveMode == true)
+            if (viewModel.LiveMode == true)
             {
                 if (videoSource != null && videoSource.IsRunning)
                 {
                     videoSource.SignalToStop();
-                    //videoSource.Stop();
+                    WebcamFeed.ImageSource = null;
+                    UploadBtn.Visibility = Visibility.Visible;
                     videoSource.WaitForStop();
                 }
-                WebcamFeed.ImageSource = null;
-                UploadBtn.Visibility = Visibility.Visible;
             }
             else
             {
@@ -96,10 +85,12 @@ namespace Qryptic
         {
             toast_title.Content = e.Title;
             toast_msg.Content = e.Message;
-            if(e.Type == ToastType.Success)
+            if (e.Type == ToastType.Success)
             {
                 toast_icon.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "check_boldDrawingImage");
-            } else {
+            }
+            else
+            {
                 toast_icon.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "x_boldDrawingImage");
             }
 
@@ -166,7 +157,6 @@ namespace Qryptic
 
         private void VideoSource_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            // Check if the frame is null
             if (eventArgs.Frame == null)
             {
                 Debug.WriteLine("eventArgs.Frame is null.");
@@ -175,61 +165,55 @@ namespace Qryptic
 
             try
             {
-                // Clone the frame to avoid access violations
-                using (Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone())
+                using Bitmap bitmap = (Bitmap)eventArgs.Frame.Clone();
+                if (bitmap == null || bitmap.Width == 0 || bitmap.Height == 0)
                 {
-                    // Check if the bitmap is valid
-                    if (bitmap == null || bitmap.Width == 0 || bitmap.Height == 0)
+                    Debug.WriteLine("Invalid bitmap.");
+                    return;
+                }
+
+                WebcamFeed.Dispatcher.Invoke(() =>
+                {
+                    WebcamFeed.ImageSource = BitmapToImageSource(bitmap);
+                });
+
+                qrReader ??= new BarcodeReader
+                {
+                    //AutoRotate = true,
+                    Options = new ZXing.Common.DecodingOptions
                     {
-                        Debug.WriteLine("Invalid bitmap.");
-                        return;
+                        TryHarder = true,
                     }
+                };
 
-                    // Update the UI with the new frame
-                    WebcamFeed.Dispatcher.Invoke(() =>
+                try
+                {
+                    var result = qrReader.Decode(bitmap);
+                    if (result != null)
                     {
-                        WebcamFeed.ImageSource = BitmapToImageSource(bitmap);
-                    });
-
-                    // Initialize the BarcodeReader if it is null
-                    qrReader ??= new BarcodeReader
-                    {
-                        //AutoRotate = true,
-                        Options = new ZXing.Common.DecodingOptions
+                        if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
                         {
-                            //TryHarder = true,
-                        }
-                    };
-
-                    try
-                    {
-                        var result = qrReader.Decode(bitmap);
-                        if (result != null)
-                        {
-                            if(result.BarcodeFormat == BarcodeFormat.QR_CODE)
+                            if (result.Text.StartsWith("http:"))
                             {
-                                if(result.Text.StartsWith("http:"))
+                                Dispatcher.Invoke(() =>
                                 {
-                                    Dispatcher.Invoke(() =>
-                                    {
-                                        qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "globe_simpleDrawingImage");
-                                        decoded.Inlines.Clear();
-                                        decoded.Inlines.Add(new Bold(new Run("URL: ")));
-                                        decoded.Inlines.Add(new Run(result.Text));
-                                    });
-                                }
-                            }
-                            else
-                            {
-
+                                    qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "globe_simpleDrawingImage");
+                                    decoded.Inlines.Clear();
+                                    decoded.Inlines.Add(new Bold(new Run("URL: ")));
+                                    decoded.Inlines.Add(new Run(result.Text));
+                                });
                             }
                         }
+                        else
+                        {
+
+                        }
                     }
-                    catch (Exception decodeEx)
-                    {
-                        Debug.WriteLine("Error decoding barcode/QR code: " + decodeEx.Message);
-                        Debug.WriteLine("Stack Trace: " + decodeEx.StackTrace);
-                    }
+                }
+                catch (Exception decodeEx)
+                {
+                    Debug.WriteLine("Error decoding barcode/QR code: " + decodeEx.Message);
+                    Debug.WriteLine("Stack Trace: " + decodeEx.StackTrace);
                 }
             }
             catch (Exception ex)
@@ -254,10 +238,10 @@ namespace Qryptic
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            MoveEyes(e.GetPosition(DrawingCanvas));
+            //MoveEyes(e.GetPosition(DrawingCanvas));
         }
 
-        private void MoveEyes(System.Windows.Point mousePos)
+        /*private void MoveEyes(System.Windows.Point mousePos)
         {
             const double headCenterX = 200;
             const double headCenterY = 155;
@@ -294,20 +278,22 @@ namespace Qryptic
         private void StoryBoard_Completed(object? sender, EventArgs e)
         {
             blinksb!.Stop();
-        }
+        }*/
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(e.ChangedButton == MouseButton.Left)
+            if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
         }
 
         private void CloseBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-           if(MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-           {
+            var result = MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
                 System.Windows.Application.Current.Shutdown();
-           }
+            }
         }
 
         private void Nav_Scan_Click(object sender, RoutedEventArgs e)
@@ -352,7 +338,9 @@ namespace Qryptic
                     {
                         index++;
                         Indicator.CornerRadius = new CornerRadius(0, 5, 5, 35);
-                    } else {
+                    }
+                    else
+                    {
                         Indicator.CornerRadius = new CornerRadius(0, 5, 5, 0);
                     }
                     Grid.SetRow(Indicator, index);
@@ -434,17 +422,17 @@ namespace Qryptic
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-           //UploadBtn.Visibility = Visibility.Visible;
+            //UploadBtn.Visibility = Visibility.Visible;
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-           //UploadBtn.Visibility = Visibility.Hidden;
+            //UploadBtn.Visibility = Visibility.Hidden;
         }
 
         private void UploadBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            OpenFileDialog openFileDialog = new()
             {
                 Title = "Select an Image",
                 Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif",
@@ -466,10 +454,14 @@ namespace Qryptic
                 if (result != null)
                 {
                     decodedStr = result.Text;
+                    CodeType typetemp = CodeType.None;
+                    string decodedResult = "";
                     if (result.BarcodeFormat == BarcodeFormat.QR_CODE)
                     {
                         if (result.Text.StartsWith("http:"))
                         {
+                            typetemp = CodeType.Website;
+                            decodedResult = result.Text;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "globe_simpleDrawingImage");
@@ -480,12 +472,14 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("BEGIN:VCARD"))
                         {
+                            typetemp = CodeType.Contact;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "user_circleDrawingImage");
                                 string name = ExtractValue(result.Text, @"FN:(.+)");
                                 string phone = ExtractValue(result.Text, @"TEL[^:]*:(\d+)");
                                 string email = ExtractValue(result.Text, @"EMAIL:(.+)");
+                                decodedResult = $"Name: {name}\nPhone: {phone}\nEmail: {email}";
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("Name: ")));
                                 decoded.Inlines.Add(new Run(name));
@@ -499,12 +493,14 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("WIFI:"))
                         {
+                            typetemp = CodeType.Wifi;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "wifi_highDrawingImage");
                                 var split = result.Text.Split(';');
                                 string ssid = split[1].Replace("S:", "");
                                 string pw = split[2].Replace("P:", "");
+                                decodedResult = $"SSID: {ssid}\nPassword: {pw}";
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("SSID: ")));
                                 decoded.Inlines.Add(new Run(ssid));
@@ -515,15 +511,18 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("mailto:"))
                         {
+                            typetemp = CodeType.Email;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "envelopeDrawingImage");
-                                Uri uri = new Uri(result.Text);
+                                Uri uri = new(result.Text);
                                 var queryParams = HttpUtility.ParseQueryString(uri.Query);
                                 string subject = queryParams["subject"] ?? "";
                                 string body = queryParams["body"] ?? "";
                                 subject = HttpUtility.UrlDecode(subject);
                                 body = HttpUtility.UrlDecode(body);
+
+                                decodedResult = $"To: {result.Text.Split('?')[0].Replace("mailto:", "")}\nSubject: {subject}\nBody: {body}";
 
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("To: ")));
@@ -538,13 +537,16 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("sms:"))
                         {
+                            typetemp = CodeType.SMS;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "chat_dotsDrawingImage");
-                                Uri uri = new Uri(result.Text);
+                                Uri uri = new(result.Text);
                                 var queryParams = HttpUtility.ParseQueryString(uri.Query);
                                 string body = queryParams["body"] ?? "";
                                 body = HttpUtility.UrlDecode(body);
+
+                                decodedResult = $"To: {result.Text.Split('?')[0].Replace("sms:", "")}\nMessage: {body}";
 
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("To: ")));
@@ -556,10 +558,14 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("geo:"))
                         {
+                            typetemp = CodeType.Location;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "map_pinDrawingImage");
                                 var split = result.Text.Replace("geo:", "").Split(',');
+
+                                decodedResult = $"Lat: {split[0]}, Long: {split[1]}";
+
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("Lat: ")));
                                 decoded.Inlines.Add(new Run(split[0]));
@@ -570,6 +576,7 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("BEGIN:VEVENT"))
                         {
+                            typetemp = CodeType.Event;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "calendar_dotsDrawingImage");
@@ -583,6 +590,8 @@ namespace Qryptic
                                 // Convert date format YYYYMMDD → DD.MM.YYYY
                                 string startDate = FormatDate(startDateRaw);
                                 string endDate = FormatDate(endDateRaw);
+
+                                decodedResult = $"Title: {title}\nDescription: {description}\nLocation: {location}\nStart: {startDate} | End: {endDate}";
 
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("Title: ")));
@@ -602,11 +611,12 @@ namespace Qryptic
                         }
                         else if (result.Text.StartsWith("upi:"))
                         {
+                            typetemp = CodeType.UPI;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "currency_inrDrawingImage");
 
-                                Uri uri = new Uri(result.Text);
+                                Uri uri = new(result.Text);
                                 var queryParams = HttpUtility.ParseQueryString(uri.Query);
 
                                 string upiId = queryParams["pa"] ?? "Not Found";
@@ -615,6 +625,8 @@ namespace Qryptic
                                 string currency = queryParams["cu"] ?? "Not Found";
                                 string note = queryParams["tn"] ?? "";
                                 string amountWithCurrency = $"{amount} {currency}";
+
+                                decodedResult = $"UPI ID: {upiId}\nPayee Name: {payeeName}\nAmount: {amountWithCurrency}\nNote: {note}";
 
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("UPI ID: ")));
@@ -632,9 +644,11 @@ namespace Qryptic
                         }
                         else
                         {
+                            typetemp = CodeType.Text;
                             Dispatcher.Invoke(() =>
                             {
                                 qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "article_ny_timesDrawingImage");
+                                decodedResult = result.Text;
                                 decoded.Inlines.Clear();
                                 decoded.Inlines.Add(new Bold(new Run("Text: ")));
                                 decoded.Inlines.Add(new Run(result.Text));
@@ -644,6 +658,8 @@ namespace Qryptic
                     }
                     else
                     {
+                        typetemp = CodeType.Barcode;
+                        decodedResult = result.Text;
                         Dispatcher.Invoke(() =>
                         {
                             qrType.SetResourceReference(System.Windows.Controls.Image.SourceProperty, "barcodeDrawingImage");
@@ -652,7 +668,11 @@ namespace Qryptic
                             decoded.Inlines.Add(new Run(result.Text));
                         });
                     }
-                } else
+
+                    ViewModel.WriteToCache(typetemp, decodedResult);
+                    viewModel.LoadItemsFromLiteDB();
+                }
+                else
                 {
                     decodedStr = "";
                 }
@@ -701,7 +721,7 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("mailto:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
                     string subject = queryParams["subject"] ?? "";
                     string body = queryParams["body"] ?? "";
@@ -713,7 +733,7 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("sms:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
                     string body = queryParams["body"] ?? "";
                     body = HttpUtility.UrlDecode(body);
@@ -744,15 +764,10 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("upi:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
 
                     string upiId = queryParams["pa"] ?? "Not Found";
-                    string payeeName = queryParams["pn"] ?? "Not Found";
-                    string amount = queryParams["am"] ?? "0";
-                    string currency = queryParams["cu"] ?? "Not Found";
-                    string note = queryParams["tn"] ?? "";
-                    string amountWithCurrency = $"{amount} {currency}";
 
                     Clipboard.SetText($"UPI ID: {upiId}");
                     viewModel.ShowToast("Copied", "UPI ID copied to clipboard", ToastType.Success);
@@ -771,7 +786,7 @@ namespace Qryptic
             {
                 if (decodedStr.StartsWith("http:"))
                 {
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save URL",
@@ -792,7 +807,7 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("BEGIN:VCARD"))
                 {
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Contact|*.vcard",
                         Title = "Save Contact",
@@ -816,7 +831,7 @@ namespace Qryptic
                     var split = decodedStr.Split(';');
                     string ssid = split[1].Replace("S:", "");
                     string pw = split[2].Replace("P:", "");
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save Wifi Credentials",
@@ -837,14 +852,14 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("mailto:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
                     string subject = queryParams["subject"] ?? "";
                     string body = queryParams["body"] ?? "";
                     subject = HttpUtility.UrlDecode(subject);
                     body = HttpUtility.UrlDecode(body);
 
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save Email",
@@ -865,12 +880,12 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("sms:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
                     string body = queryParams["body"] ?? "";
                     body = HttpUtility.UrlDecode(body);
 
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save SMS",
@@ -893,7 +908,7 @@ namespace Qryptic
                 {
                     var split = decodedStr.Replace("geo:", "").Split(',');
 
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save Location",
@@ -914,16 +929,7 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("BEGIN:VEVENT"))
                 {
-                    string title = ExtractValue(decodedStr, @"SUMMARY:(.+)");
-                    string description = ExtractValue(decodedStr, @"DESCRIPTION:(.+)");
-                    string location = ExtractValue(decodedStr, @"LOCATION:(.+)");
-                    string startDateRaw = ExtractValue(decodedStr, @"DTSTART:(\d+)");
-                    string endDateRaw = ExtractValue(decodedStr, @"DTEND:(\d+)");
-
-                    string startDate = FormatDate(startDateRaw);
-                    string endDate = FormatDate(endDateRaw);
-
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Event File|*.ics",
                         Title = "Save Event",
@@ -944,7 +950,7 @@ namespace Qryptic
                 }
                 else if (decodedStr.StartsWith("upi:"))
                 {
-                    Uri uri = new Uri(decodedStr);
+                    Uri uri = new(decodedStr);
                     var queryParams = HttpUtility.ParseQueryString(uri.Query);
 
                     string upiId = queryParams["pa"] ?? "Not Found";
@@ -954,7 +960,7 @@ namespace Qryptic
                     string note = queryParams["tn"] ?? "";
                     string amountWithCurrency = $"{amount} {currency}";
 
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save UPI Details",
@@ -964,7 +970,7 @@ namespace Qryptic
                     {
                         try
                         {
-                            File.WriteAllText(saveFileDialog.FileName, $"UPI ID: {upiId}");
+                            File.WriteAllText(saveFileDialog.FileName, $"UPI ID: {upiId}\nPayee Name: {payeeName}\nAmount: {amountWithCurrency}\nNote: {note}");
                         }
                         catch (Exception ex)
                         {
@@ -975,7 +981,7 @@ namespace Qryptic
                 }
                 else
                 {
-                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    SaveFileDialog saveFileDialog = new()
                     {
                         Filter = "Text File|*.txt",
                         Title = "Save URL",
@@ -995,6 +1001,11 @@ namespace Qryptic
                     viewModel.ShowToast("Saved", "URL saved!", ToastType.Success);
                 }
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageUPI"
+    x:Class="Qryptic.PageEmail"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,10 +11,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.8*" />
-            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="0.7*" />
+            <RowDefinition Height="0.3*" />
             <RowDefinition />
-            <RowDefinition Height="0.35*" />
+            <RowDefinition Height="0.3*" />
         </Grid.RowDefinitions>
         <StackPanel
             x:Name="HeaderText"
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="UPI"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Email"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -67,77 +67,59 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="UPI ID: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
+                Content="To: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_upiId"
+                x:Name="tbox_recipient"
                 Grid.Column="1"
                 Margin="0,2"
-                FontSize="13"
+                FontSize="14"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter UPI ID" />
+                Style="{DynamicResource ModernTextBox}"
+                Tag="Enter Email Recipient ID" />
             <Label
                 Grid.Row="1"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Payee Name: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
+                Content="Subject: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_name"
+                x:Name="tbox_subject"
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="0,2"
-                FontSize="13"
+                FontSize="14"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter payee name" />
+                Style="{DynamicResource ModernTextBox}"
+                Tag="Enter Subject" />
             <Label
                 Grid.Row="2"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Amount: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
+                Content="Subject: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_amount"
+                x:Name="tbox_message"
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="0,2"
-                FontSize="13"
+                FontSize="14"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter amount in INR" />
-            <Label
-                Grid.Row="3"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="Description: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="13"
-                FontWeight="Medium" />
-            <TextBox
-                x:Name="tbox_desc"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="0,2"
-                FontSize="13"
-                FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox_Thin}"
-                Tag="Enter description" />
+                Style="{DynamicResource ModernTextBox}"
+                Tag="Enter Message" />
         </Grid>
         <Button
             Grid.Row="2"

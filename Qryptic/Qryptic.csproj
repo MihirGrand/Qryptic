@@ -10,11 +10,19 @@
 
   <ItemGroup>
     <None Remove="Assets\Fonts\Batangas.ttf" />
+    <None Remove="Assets\Fonts\SpaceGroteskBold.ttf" />
+    <None Remove="Assets\Fonts\SpaceGroteskMedium.ttf" />
+    <None Remove="Assets\Fonts\SpaceGroteskRegular.ttf" />
+    <None Remove="Assets\Fonts\SpaceGroteskSemiBold.ttf" />
     <None Remove="eyes.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Fonts\Batangas.ttf" />
+    <Resource Include="Assets\Fonts\SpaceGroteskBold.ttf" />
+    <Resource Include="Assets\Fonts\SpaceGroteskMedium.ttf" />
+    <Resource Include="Assets\Fonts\SpaceGroteskRegular.ttf" />
+    <Resource Include="Assets\Fonts\SpaceGroteskSemiBold.ttf" />
     <EmbeddedResource Include="eyes.json" />
   </ItemGroup>
 
@@ -22,6 +30,7 @@
     <PackageReference Include="AForge.Video" Version="2.2.5" />
     <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
     <PackageReference Include="System.Runtime.InteropServices.WindowsRuntime" Version="4.3.0" />

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageWifi"
+    x:Class="Qryptic.PageUPI"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,10 +11,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.5*" />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.8*" />
+            <RowDefinition Height="0.25*" />
             <RowDefinition />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.35*" />
         </Grid.RowDefinitions>
         <StackPanel
             x:Name="HeaderText"
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="Wifi Credentials"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="UPI"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -67,41 +67,77 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="SSID: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="14"
+                Content="UPI ID: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="13"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_ssid"
+                x:Name="tbox_upiId"
                 Grid.Column="1"
                 Margin="0,2"
-                FontSize="14"
+                FontSize="13"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox}"
-                Tag="Enter WiFi SSID" />
+                Style="{DynamicResource ModernTextBox_Thin}"
+                Tag="Enter UPI ID" />
             <Label
                 Grid.Row="1"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Password: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="14"
+                Content="Payee Name: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="13"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_pass"
+                x:Name="tbox_name"
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="0,2"
-                FontSize="14"
+                FontSize="13"
                 FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox}"
-                Tag="Enter WiFi Password" />
+                Style="{DynamicResource ModernTextBox_Thin}"
+                Tag="Enter payee name" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Amount: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="13"
+                FontWeight="Medium" />
+            <TextBox
+                x:Name="tbox_amount"
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="0,2"
+                FontSize="13"
+                FontWeight="Normal"
+                Style="{DynamicResource ModernTextBox_Thin}"
+                Tag="Enter amount in INR" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Description: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
+                FontSize="13"
+                FontWeight="Medium" />
+            <TextBox
+                x:Name="tbox_desc"
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="0,2"
+                FontSize="13"
+                FontWeight="Normal"
+                Style="{DynamicResource ModernTextBox_Thin}"
+                Tag="Enter description" />
         </Grid>
         <Button
             Grid.Row="2"

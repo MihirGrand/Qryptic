@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="Batangas">/Assets/Fonts/#Batangas</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk_Thin">/Assets/Fonts/#Space Grotesk Thin</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk_Regular">/Assets/Fonts/#Space Grotesk Regular</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk_Medium">/Assets/Fonts/#Space Grotesk Medium</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk_SemiBold">/Assets/Fonts/#Space Grotesk SemiBold</FontFamily>
+    <FontFamily x:Key="SpaceGrotesk_Bold">/Assets/Fonts/#Space Grotesk Bold</FontFamily>
+</ResourceDictionary>

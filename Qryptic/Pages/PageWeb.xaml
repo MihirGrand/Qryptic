@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageText"
+    x:Class="Qryptic.PageWeb"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="Text"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Website"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -69,8 +69,8 @@
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Text: "
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="URL: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14"
                 FontWeight="Medium" />
             <TextBox
@@ -79,7 +79,7 @@
                 FontSize="14"
                 FontWeight="Normal"
                 Style="{DynamicResource ModernTextBox}"
-                Tag="Enter Text" />
+                Tag="Enter URL" />
         </Grid>
         <Button
             Grid.Row="2"

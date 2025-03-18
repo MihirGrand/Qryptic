@@ -8,11 +8,13 @@
     Title="MainWindow"
     Width="400"
     Height="600"
+    d:DataContext="{d:DesignInstance Type=local:ViewModel}"
     AllowsTransparency="True"
     Background="Transparent"
     Closing="Window_Closing"
     Loaded="Window_Loaded"
     MouseMove="Window_MouseMove"
+    WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
@@ -36,19 +38,7 @@
                 To="8"
                 Duration="0:0:0.3" />
         </Storyboard>
-        <SolidColorBrush x:Key="Highlight" Color="#312F2F" />
-        <SolidColorBrush x:Key="Text_Primary" Color="#22181C" />
-        <Style TargetType="{x:Type TabControl}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabControl">
-                        <Border BorderThickness="0" CornerRadius="15 0 20 0">
-                            <ContentPresenter ContentSource="SelectedContent" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <local:CodeTypeToResourceConverter x:Key="CodeTypeToResourceConverter" />
     </Window.Resources>
     <Border
         Margin="30"
@@ -101,7 +91,8 @@
                         Background="Transparent"
                         CornerRadius="5"
                         Cursor="Hand"
-                        PreviewMouseLeftButtonDown="CloseBtn_PreviewMouseLeftButtonDown">
+                        PreviewMouseLeftButtonDown="CloseBtn_PreviewMouseLeftButtonDown"
+                        ToolTip="Close">
                         <Image Source="{DynamicResource xDrawingImage}" />
                         <Border.Triggers>
                             <EventTrigger RoutedEvent="MouseEnter">
@@ -201,7 +192,7 @@
                                     x:Name="ScannerGrid"
                                     Width="250"
                                     Height="200"
-                                    Margin="0,0,0,10"
+                                    Margin="0,0,0,20"
                                     VerticalAlignment="Bottom">
                                     <Border
                                         x:Name="WebcamBorder"
@@ -221,13 +212,21 @@
                                             VerticalAlignment="Bottom"
                                             Background="White"
                                             BorderBrush="#22181C"
-                                            BorderThickness="1"
+                                            BorderThickness="1,2,1,1"
                                             CornerRadius="10 10 15 15"
                                             Cursor="Hand"
+                                            IsHitTestVisible="True"
                                             PreviewMouseLeftButtonDown="UploadBtn_PreviewMouseLeftButtonDown">
-                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                                <Image Margin="0,10" Source="{DynamicResource floppy_disk_back_fillDrawingImage}" />
-                                                <Label VerticalAlignment="Center" Content="Upload" />
+                                            <StackPanel
+                                                HorizontalAlignment="Center"
+                                                IsHitTestVisible="True"
+                                                Orientation="Horizontal">
+                                                <Image Margin="0,8,5,8" Source="{DynamicResource floppy_disk_back_fillDrawingImage}" />
+                                                <Label
+                                                    VerticalAlignment="Center"
+                                                    Content="Upload"
+                                                    FontFamily="{StaticResource SpaceGrotesk_Bold}"
+                                                    FontSize="14" />
                                             </StackPanel>
                                             <Border.Triggers>
                                                 <EventTrigger RoutedEvent="MouseEnter">
@@ -274,28 +273,37 @@
                                 <StackPanel
                                     Grid.Row="1"
                                     HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
                                     Orientation="Horizontal">
-                                    <Label Content="Live Mode" />
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="Live"
+                                        FontFamily="{StaticResource SpaceGrotesk_Regular}" />
                                     <CheckBox
                                         Checked="CheckBox_Checked"
                                         IsChecked="{Binding LiveMode}"
                                         Style="{DynamicResource SwitchCheckBoxStyle}"
                                         Unchecked="CheckBox_Unchecked" />
-                                    <Label Content="Static Mode" />
+                                    <Label
+                                        VerticalAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="Static"
+                                        FontFamily="{StaticResource SpaceGrotesk_Regular}" />
                                 </StackPanel>
                                 <Border
                                     Grid.Row="2"
-                                    Margin="30,10,30,40"
+                                    Margin="30,20,30,20"
                                     BorderBrush="#22181C"
-                                    BorderThickness="1"
+                                    BorderThickness="1.5"
                                     CornerRadius="12">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="3*" />
-                                            <RowDefinition Height="1.3*" />
+                                            <RowDefinition Height="1.2*" />
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="0.5*" />
+                                            <ColumnDefinition Width="0.4*" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Border
@@ -304,8 +312,8 @@
                                             BorderThickness="0,0,1.5,0">
                                             <Image
                                                 x:Name="qrType"
-                                                Margin="20"
-                                                Source="{DynamicResource user_circleDrawingImage}" />
+                                                Margin="12,20"
+                                                Source="{DynamicResource barcodeDrawingImage}" />
                                             <Border.BorderBrush>
                                                 <VisualBrush>
                                                     <VisualBrush.Visual>
@@ -323,9 +331,11 @@
                                             x:Name="decoded"
                                             Grid.Row="0"
                                             Grid.Column="1"
+                                            Margin="5,0"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Text="Loading..."
+                                            FontFamily="{StaticResource SpaceGrotesk_Thin}"
+                                            Text="Looking for a code..."
                                             TextWrapping="Wrap" />
                                         <Border
                                             Grid.Row="1"
@@ -392,7 +402,7 @@
                                     Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Content="Create New"
-                                    FontFamily="{StaticResource SpaceGrotesk}"
+                                    FontFamily="{StaticResource SpaceGrotesk_Regular}"
                                     FontSize="22"
                                     FontWeight="Bold" />
                                 <local:FlatButton
@@ -478,16 +488,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="5.8*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Label
@@ -496,32 +497,92 @@
                                     Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Content="Cache"
-                                    FontFamily="{StaticResource SpaceGrotesk}"
+                                    FontFamily="{DynamicResource SpaceGrotesk_Regular}"
                                     FontSize="22"
                                     FontWeight="Bold" />
+                                <ListView
+                                    Grid.Row="1"
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Margin="0,10,0,20"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding Cache}"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                Grid.Row="2"
+                                                Margin="0,0,0,10"
+                                                BorderBrush="#22181C"
+                                                BorderThickness="1.5"
+                                                CornerRadius="12">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="0.3*" />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0" BorderThickness="0,0,1.5,0">
+                                                        <Image
+                                                            x:Name="qrType"
+                                                            Margin="12,20"
+                                                            Source="{Binding Type, Converter={StaticResource CodeTypeToResourceConverter}}" />
+                                                        <Border.BorderBrush>
+                                                            <VisualBrush>
+                                                                <VisualBrush.Visual>
+                                                                    <Rectangle
+                                                                        Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}"
+                                                                        Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"
+                                                                        Stroke="#22181C"
+                                                                        StrokeDashArray="4 4"
+                                                                        StrokeThickness="2" />
+                                                                </VisualBrush.Visual>
+                                                            </VisualBrush>
+                                                        </Border.BorderBrush>
+                                                    </Border>
+                                                    <TextBlock
+                                                        x:Name="decoded"
+                                                        Grid.Row="0"
+                                                        Grid.Column="1"
+                                                        Margin="5,0"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        FontFamily="{StaticResource SpaceGrotesk_Thin}"
+                                                        Text="{Binding Result}"
+                                                        TextWrapping="Wrap" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                        <ContentPresenter />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+
+                                </ListView>
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="5*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="5*" />
-                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="9*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="0.4*" />
-                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="3*" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <Label
@@ -530,9 +591,23 @@
                                     Grid.ColumnSpan="2"
                                     VerticalAlignment="Bottom"
                                     Content="Config"
-                                    FontFamily="{DynamicResource SpaceGrotesk}"
+                                    FontFamily="{DynamicResource SpaceGrotesk_Regular}"
                                     FontSize="22"
                                     FontWeight="Bold" />
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="2"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{DynamicResource SpaceGrotesk_Regular}"
+                                    FontSize="15"
+                                    FontWeight="Regular">
+                                    <TextBlock>
+                                        Made by<Run Text=" " />
+                                        <Hyperlink NavigateUri="https://github.com/mihirgrand" RequestNavigate="Hyperlink_RequestNavigate">
+                                            Mihir
+                                        </Hyperlink></TextBlock>
+                                </Label>
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
@@ -600,7 +675,7 @@
                             Grid.Column="1"
                             Margin="5,0,0,0"
                             Content="Title"
-                            FontFamily="{DynamicResource SpaceGrotesk}"
+                            FontFamily="{DynamicResource SpaceGrotesk_Regular}"
                             FontSize="14"
                             FontWeight="SemiBold"
                             Foreground="White" />
@@ -610,14 +685,14 @@
                             Grid.Column="1"
                             Margin="5,0,0,0"
                             Content="Message"
-                            FontFamily="{DynamicResource SpaceGrotesk}"
+                            FontFamily="{DynamicResource SpaceGrotesk_Regular}"
                             FontSize="13"
                             FontWeight="Medium"
                             Foreground="White" />
                     </Grid>
                 </Border>
             </Grid>
-            <Canvas Name="DrawingCanvas" Opacity="0">
+            <!--<Canvas Name="DrawingCanvas" Opacity="0">
                 <Ellipse
                     Canvas.Left="125"
                     Canvas.Top="80"
@@ -665,7 +740,7 @@
                     StrokeStartLineCap="Round"
                     StrokeThickness="7" />
 
-            </Canvas>
+            </Canvas>-->
         </Grid>
     </Border>
 </Window>

@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Qryptic.PageLocation"
+    x:Class="Qryptic.PageText"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -11,10 +11,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.2*" />
-            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="0.3*" />
             <RowDefinition Height="0.3*" />
             <RowDefinition />
-            <RowDefinition Height="0.3*" />
+            <RowDefinition Height="0.35*" />
         </Grid.RowDefinitions>
         <StackPanel
             x:Name="HeaderText"
@@ -54,8 +54,8 @@
             </Border>
             <Label
                 VerticalAlignment="Center"
-                Content="Location"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Text"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -66,42 +66,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
             <Label
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                Content="Latitude: "
-                FontFamily="{StaticResource SpaceGrotesk}"
+                Content="Text: "
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14"
                 FontWeight="Medium" />
             <TextBox
-                x:Name="tbox_lat"
+                x:Name="tbox_text"
                 Grid.Column="1"
-                Margin="0,2"
                 FontSize="14"
                 FontWeight="Normal"
                 Style="{DynamicResource ModernTextBox}"
-                Tag="Enter latitude" />
-            <Label
-                Grid.Row="1"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="Longitude: "
-                FontFamily="{StaticResource SpaceGrotesk}"
-                FontSize="14"
-                FontWeight="Medium" />
-            <TextBox
-                x:Name="tbox_long"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0,2"
-                FontSize="14"
-                FontWeight="Normal"
-                Style="{DynamicResource ModernTextBox}"
-                Tag="Enter Longitude" />
+                Tag="Enter Text" />
         </Grid>
         <Button
             Grid.Row="2"
@@ -114,7 +92,7 @@
         <Border
             Grid.Row="3"
             Grid.RowSpan="2"
-            Margin="30,20"
+            Margin="30"
             BorderBrush="#22181C"
             BorderThickness="1.4"
             CornerRadius="12">

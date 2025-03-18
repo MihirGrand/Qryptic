@@ -33,7 +33,7 @@
                 VerticalAlignment="Top"
                 VerticalContentAlignment="Top"
                 Content="{Binding LabelText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="13"
                 FontWeight="Medium" />
         </Grid>

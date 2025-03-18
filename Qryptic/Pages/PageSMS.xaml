@@ -55,7 +55,7 @@
             <Label
                 VerticalAlignment="Center"
                 Content="SMS"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14" />
         </StackPanel>
         <Grid
@@ -74,7 +74,7 @@
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 Content="Phone: "
-                FontFamily="{StaticResource SpaceGrotesk}"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14"
                 FontWeight="Medium" />
             <TextBox
@@ -90,7 +90,7 @@
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 Content="Message: "
-                FontFamily="{StaticResource SpaceGrotesk}"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="14"
                 FontWeight="Medium" />
             <TextBox

@@ -31,7 +31,7 @@
             <Label
                 Grid.Column="1"
                 Content="{Binding LabelText, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                FontFamily="{StaticResource SpaceGrotesk}"
+                FontFamily="{StaticResource SpaceGrotesk_Regular}"
                 FontSize="13"
                 FontWeight="Medium"
                 IsHitTestVisible="False" />
