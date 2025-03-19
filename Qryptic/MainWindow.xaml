@@ -594,6 +594,17 @@
                                     FontFamily="{DynamicResource SpaceGrotesk_Regular}"
                                     FontSize="22"
                                     FontWeight="Bold" />
+                                <StackPanel
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="0,10"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        x:Name="ClearCacheBtn"
+                                        Click="ClearCacheBtn_Click"
+                                        Content="Clear Cache"
+                                        Style="{DynamicResource FlatButtonStyle}" />
+                                </StackPanel>
                                 <Label
                                     Grid.Row="4"
                                     Grid.Column="1"
@@ -639,9 +650,6 @@
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <local:PageBarcode />
-                        </TabItem>
-                        <TabItem Visibility="Collapsed">
-                            <TextBox Text="Hello, World!" />
                         </TabItem>
                     </TabControl>
                 </Border>

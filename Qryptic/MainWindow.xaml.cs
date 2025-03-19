@@ -1,5 +1,6 @@
 ﻿using AForge.Video;
 using AForge.Video.DirectShow;
+using LiteDB;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Drawing;
@@ -288,9 +289,9 @@ namespace Qryptic
 
         private void CloseBtn_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var result = MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show("Are you sure you want to exit?", "Exit", MessageBoxButton.OKCancel, MessageBoxImage.Question);
 
-            if (result == MessageBoxResult.Yes)
+            if (result == MessageBoxResult.OK)
             {
                 System.Windows.Application.Current.Shutdown();
             }
@@ -1005,7 +1006,23 @@ namespace Qryptic
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = e.Uri.AbsoluteUri,
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
 
+        private void ClearCacheBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to clear cache?", "Clear cache", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.OK)
+            {
+                string appFolder = AppDomain.CurrentDomain.BaseDirectory;
+                File.Delete(Path.Combine(appFolder, "cache.db"));
+            }
         }
     }
 }
